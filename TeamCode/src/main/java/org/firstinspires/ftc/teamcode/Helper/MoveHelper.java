@@ -19,7 +19,7 @@ public class MoveHelper extends OperationHelper {
     private DcMotor FRMotor;
     private DcMotor BLMotor;
     private DcMotor BRMotor;
-    //private boolean isPositionValid;
+    private boolean isPositionValid;
     public double encoderPowerLevel = 1;
 
     public MoveHelper(Telemetry t, HardwareMap h)
@@ -90,6 +90,7 @@ public class MoveHelper extends OperationHelper {
     }
 
     public void driveForward (double power){
+        telemetry.addData("moving forward", power);
         FLMotor.setPower(power);
         FRMotor.setPower(power);
         BLMotor.setPower(power);
@@ -112,7 +113,7 @@ public class MoveHelper extends OperationHelper {
         BLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FLMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        isPositionValid = false;
+        isPositionValid = false;
     }
     public void runUsingEncoders (){
         BRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -150,23 +151,26 @@ public class MoveHelper extends OperationHelper {
         telemetry.addData("Continue target: " + motor.getDeviceName(),motor.getTargetPosition());
     }
 
-    public void runMotorsToPosition(int flPos, int frPos, int blPos, int brPos){
-//        if (!isPositionValid) {
+    public void runMotorsToPosition(int flPos, int frPos, int brPos, int blPos){
+        if (!isPositionValid) {
             runOneMotor(FLMotor, flPos);
             runOneMotor(FRMotor, frPos);
             runOneMotor(BRMotor, brPos);
             runOneMotor(BLMotor, blPos);
-//            isPositionValid = true;
-//        }
+            isPositionValid = true;
+        }
+    }
+    public boolean areMotorsBusy() {
+        return FLMotor.isBusy() || FRMotor.isBusy() || BRMotor.isBusy() || BLMotor.isBusy();
     }
 
     public void continueToPosition(){
-//        if (isPositionValid) {
+        if (isPositionValid) {
             continueOneMotor(FLMotor);
             continueOneMotor(FRMotor);
             continueOneMotor(BRMotor);
             continueOneMotor(BLMotor);
-//        }
+        }
     }
 
     public void checkTeleOp(Gamepad gamepad1,Gamepad gamepad2){
