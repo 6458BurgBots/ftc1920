@@ -91,7 +91,7 @@ public class Autonomous1920 extends OpMode{
                 moveHelper.resetEncoders();
                 state = 50;
                 break;
-            case 50: //Turn 90 degrees to the left towards the building plate.
+            case 50: //Turn 90 degrees to the right towards the building plate.
                 moveHelper.runMotorsToPosition(-1000,1000,1000,-1000);
                 advanceToStateAfterTime(55,2);
                 break;
@@ -108,16 +108,42 @@ public class Autonomous1920 extends OpMode{
                 state = 70;
                 break;
             case 70: //Move backward with building plate.
-                moveHelper.runMotorsToPosition(1500,1500,1500,1500);
+                moveHelper.runMotorsToPosition(1800,1800,1800,1800);
                 advanceToStateAfterTime(75, 2);
                 break;
             case 75:
-                //moveHelper.resetEncoders();
-                moveHelper.runWithoutEncoders();
+                moveHelper.resetEncoders();
                 state = 80;
                 break;
-            case 80://need to change encoder values. Strafe towards center of field.
-                moveHelper.omniDrive(.3,0,0);
+            case 80://Strafe towards center of field.
+                moveHelper.runMotorsToPosition(-2630,2630,-2630,2630);
+                advanceToStateAfterTime(85, 2);
+                break;
+            case 85:
+                moveHelper.resetEncoders();
+                state = 90;
+                break;
+            case 90://Move forward away from wall
+                moveHelper.runMotorsToPosition(-300,-300,-300,-300);
+                advanceToStateAfterTime(95, 1);
+                break;
+            case 95:
+                moveHelper.resetEncoders();
+                state = 100;
+                break;
+            case 100://Turn right towards middle of field
+                moveHelper.runMotorsToPosition(-1000,1000,1000,-1000);
+                advanceToStateAfterTime(115, 1);
+                break;
+            case 115:
+              //  moveHelper.resetEncoders();
+                moveHelper.runUsingEncoders();
+                state = 120;
+                break;
+
+
+            case 120:
+                moveHelper.omniDrive(0,-.25,0);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
                 {
                     double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
@@ -126,21 +152,16 @@ public class Autonomous1920 extends OpMode{
                     telemetry.addData("Green Ratio  ", blueToGreen);
 
                     if (blueToGreen > 1.3 && blueToRed > 2) {
-                        state = 90;
+                        state = 130;
                     }
                 }
                 break;
-
-            case 90:
+            case 130:
                 moveHelper.omniDrive(0,0,0);
-                state = 100;
                 break;
-            case 100:
                 /*need to add color sensor stuff for moving to the middle of the field.
                 Move the color sensor closer to the floor so we can have more accurate readings
-                We might have to turn instead of strife the whole was so that the color sensor stops the robot over the line
-                For Wesley: At beginning of practice on thursday take encoder values for strafe out of the corner. Also get encoder
-                values for the move forward and the turn.
+                We might have to turn instead of strafe the whole way so that the color sensor stops the robot over the line
 
 */
 
