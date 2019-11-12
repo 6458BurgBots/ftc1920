@@ -175,9 +175,9 @@ public class MoveHelper extends OperationHelper {
 
     public void checkTeleOp(Gamepad gamepad1,Gamepad gamepad2){
         // alaina is struggling to find a way to describe this
-        double LY = gamepad1.left_stick_y*3/4;
-        double LX = gamepad1.left_stick_x*3/4;
-        double RX = gamepad1.right_stick_x*3/4;
+        double LY = gamepad1.right_stick_y*3/4;
+        double LX = gamepad1.right_stick_x*3/4;
+        double RX = gamepad1.left_stick_x*3/4;
 
 
         //Establishes floating variables linked to the gamepads

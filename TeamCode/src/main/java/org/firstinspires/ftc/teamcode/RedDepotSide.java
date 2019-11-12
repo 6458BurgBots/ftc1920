@@ -3,31 +3,48 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
-@Autonomous(name="Autonomous1920", group="Autonomous")
-public class Autonomous1920 extends OpMode{
+@Autonomous(name="RedDepotSide", group="Autonomous")
+public class RedDepotSide extends OpMode{
 
+    public static double SAMPLE_SERVO_CLOSED = 1;
+    public static double SAMPLE_SERVO_OPEN = .5;
     MoveHelper moveHelper;
     DistanceSensor sensorRange;
     int state = 0;
     double lastTime;
     ColorSensor sensorColor;
+    protected Servo plateArmServo;
+
+    public int long_move = -6200;
+
+    public void init_loop() {
+        if (gamepad1.y){
+            long_move = -1000;
+            telemetry.addData("Starting Position","outside");
+        }
+        if (gamepad1.a){
+            long_move = -500;
+            telemetry.addData("Starting Position","inside");
+        }
+    }
 
     @Override
     public void init() {
         moveHelper = new MoveHelper(telemetry, hardwareMap);
         moveHelper.init();
-        sensorRange = hardwareMap.get(DistanceSensor.class, "range");
+        //sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
+        plateArmServo = hardwareMap.servo.get("platearm");
+        plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
     }
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
     // parameters include the newState, which refers to the new value being assigned to state at end of duration
@@ -56,35 +73,43 @@ public class Autonomous1920 extends OpMode{
         switch (state) {
             case 0:
                 lastTime = getRuntime();
-                state = 10;
-                break;
-            case 10: //Move forward to blocks.
-                //moveHelper.driveForward(-1);
-                moveHelper.runMotorsToPosition(-1770,-1770,-1770,-1770);
-                advanceToStateAfterTime(15, 2);
-                break;
-            case 15:
-                moveHelper.resetEncoders();
                 state = 20;
                 break;
-            case 20: //move backward towards wall.
-                moveHelper.runMotorsToPosition(1500,1500,1500,1500);
+           // case 10: //Move forward to blocks.
+                //moveHelper.driveForward(-1);
+               // moveHelper.runMotorsToPosition(-1770,-1770,-1770,-1770);
+               // advanceToStateAfterTime(15, 2);
+               // break;
+           // case 15:
+               // moveHelper.resetEncoders();
+               // state = 20;
+               // break;
+           // case 20: //move backward towards wall.
+               // moveHelper.runMotorsToPosition(1500,1500,1500,1500);
+               // advanceToStateAfterTime(25, 2);
+               // break;
+           // case 25:
+               // moveHelper.resetEncoders();
+               // state = 30;
+               // break;
+            case 20: //move forward away from wall.
+                moveHelper.runMotorsToPosition(-300,-300,-300,-300);
                 advanceToStateAfterTime(25, 2);
                 break;
             case 25:
                 moveHelper.resetEncoders();
                 state = 30;
                 break;
-            case 30: //Turn 90 degrees to the left
-                moveHelper.runMotorsToPosition(1000,-1000,-1000,1000);
+            case 30: //Turn 90 degrees to the right
+                moveHelper.runMotorsToPosition(-1040,1040,1040,-1040);
                 advanceToStateAfterTime(35,2);
                 break;
             case 35:
                 moveHelper.resetEncoders();
                 state = 40;
                 break;
-            case 40: //move across mid line and towards building site.
-                moveHelper.runMotorsToPosition(-6500,-6500,-6500,-6500);
+            case 40: //move across mid line building site.
+                moveHelper.runMotorsToPosition(long_move,long_move,long_move,long_move);
                 advanceToStateAfterTime(45,5);
                 break;
             case 45:
@@ -92,7 +117,7 @@ public class Autonomous1920 extends OpMode{
                 state = 50;
                 break;
             case 50: //Turn 90 degrees to the right towards the building plate.
-                moveHelper.runMotorsToPosition(-1000,1000,1000,-1000);
+                moveHelper.runMotorsToPosition(1050,-1050,-1050,1050);
                 advanceToStateAfterTime(55,2);
                 break;
             case 55:
@@ -100,23 +125,34 @@ public class Autonomous1920 extends OpMode{
                 state = 60;
                 break;
             case 60: //Move forward towards building plate.
-                moveHelper.runMotorsToPosition(-1500,-1500,-1500,-1500);
-                advanceToStateAfterTime(65,2);
+                moveHelper.encoderPowerLevel = .2;
+                moveHelper.runMotorsToPosition(-1800,-1800,-1800,-1800);
+                advanceToStateAfterTime(65,5);
                 break;
             case 65:
                 moveHelper.resetEncoders();
-                state = 70;
+                moveHelper.encoderPowerLevel = .5;
+                state = 66;
+                break;
+            case 66:
+                plateArmServo.setPosition(SAMPLE_SERVO_CLOSED);
+                advanceToStateAfterTime(70,1);
                 break;
             case 70: //Move backward with building plate.
-                moveHelper.runMotorsToPosition(1800,1800,1800,1800);
+                moveHelper.runMotorsToPosition(2500,2500,2500,2500);
                 advanceToStateAfterTime(75, 2);
                 break;
             case 75:
+                moveHelper.encoderPowerLevel = 1;
                 moveHelper.resetEncoders();
-                state = 80;
+                state = 76;
+                break;
+            case 76:
+                plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
+                advanceToStateAfterTime(80,1);
                 break;
             case 80://Strafe towards center of field.
-                moveHelper.runMotorsToPosition(-2630,2630,-2630,2630);
+                moveHelper.runMotorsToPosition(2630,-2630,2630,-2630);
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
@@ -132,7 +168,7 @@ public class Autonomous1920 extends OpMode{
                 state = 100;
                 break;
             case 100://Turn right towards middle of field
-                moveHelper.runMotorsToPosition(-1000,1000,1000,-1000);
+                moveHelper.runMotorsToPosition(1000,-1000,-1000,1000);
                 advanceToStateAfterTime(115, 1);
                 break;
             case 115:
@@ -140,18 +176,17 @@ public class Autonomous1920 extends OpMode{
                 moveHelper.runUsingEncoders();
                 state = 120;
                 break;
-
-
             case 120:
                 moveHelper.omniDrive(0,-.25,0);
-                if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
+                if (sensorColor.red() > 30 && sensorColor.green() > 0 && sensorColor.blue() > 0)
                 {
-                    double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
-                    double blueToRed = (double)sensorColor.blue() / sensorColor.red();
-                    telemetry.addData("Red Ratio ", blueToRed);
-                    telemetry.addData("Green Ratio  ", blueToGreen);
+                    double redToGreen = (double)sensorColor.red() / sensorColor.green();
+                    double redToBlue = (double)sensorColor.red() / sensorColor.blue();
+                    telemetry.addData("Blue Ratio ", redToBlue);
+                    telemetry.addData("Green Ratio  ", redToGreen);
 
-                    if (blueToGreen > 1.3 && blueToRed > 2) {
+                    if (redToGreen > 2 && redToBlue > 2)
+                    {
                         state = 130;
                     }
                 }
