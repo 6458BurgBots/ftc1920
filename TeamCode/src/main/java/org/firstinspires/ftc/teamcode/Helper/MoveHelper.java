@@ -21,6 +21,7 @@ public class MoveHelper extends OperationHelper {
     private DcMotor BRMotor;
     private boolean isPositionValid;
     public double encoderPowerLevel = 1;
+    public boolean joystickJacob = true;
 
     public MoveHelper(Telemetry t, HardwareMap h)
     {
@@ -175,9 +176,20 @@ public class MoveHelper extends OperationHelper {
 
     public void checkTeleOp(Gamepad gamepad1,Gamepad gamepad2){
         // alaina is struggling to find a way to describe this
-        double LY = gamepad1.right_stick_y*3/4;
-        double LX = gamepad1.right_stick_x*3/4;
-        double RX = gamepad1.left_stick_x*3/4;
+        double LY;
+        double LX;
+        double RX;
+
+         // Jacob wants the sticks reversed for driving.
+        if (joystickJacob) {
+            LY = gamepad1.left_stick_y*3/4;
+            LX = gamepad1.left_stick_x*3/4;
+            RX = gamepad1.right_stick_x*3/4;
+        } else {
+            LY = gamepad1.right_stick_y*3/4;
+            LX = gamepad1.right_stick_x*3/4;
+            RX = gamepad1.left_stick_x*3/4;
+        }
 
 
         //Establishes floating variables linked to the gamepads

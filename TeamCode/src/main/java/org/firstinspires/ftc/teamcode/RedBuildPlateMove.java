@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
-@Autonomous(name="BlueBuildPlateMove", group="Autonomous")
-public class BlueBuildPlateMove extends OpMode{
+@Autonomous(name="RedBuildPlateMove", group="Autonomous")
+public class RedBuildPlateMove extends OpMode{
 
     public static double SAMPLE_SERVO_CLOSED = 1;
     public static double SAMPLE_SERVO_OPEN = .5;
@@ -92,7 +93,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 40;
                 break;
             case 40: //Strafe left
-                moveHelper.runMotorsToPosition(800,-800,800,-800);
+                moveHelper.runMotorsToPosition(-800,800,-800,800);
                 advanceToStateAfterTime(45,1);
                 break;
             case 45:
@@ -137,7 +138,7 @@ public class BlueBuildPlateMove extends OpMode{
                 advanceToStateAfterTime(80,1);
                 break;
             case 80://Strafe towards center of field.
-                moveHelper.runMotorsToPosition(-2430,2430,-2430,2430);
+                moveHelper.runMotorsToPosition(2430,-2430,2430,-2430);
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
@@ -158,7 +159,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 100;
                 break;
             case 100://Turn right towards middle of field
-                moveHelper.runMotorsToPosition(-1050,1050,1050,-1050);
+                moveHelper.runMotorsToPosition(1050,-1050,-1050,1050);
                 advanceToStateAfterTime(115, 1);
                 break;
             case 115:
@@ -168,14 +169,14 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 120:
                 moveHelper.omniDrive(0,-.25,0);
-                if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
+                if (sensorColor.red() > 30 && sensorColor.green() > 0 && sensorColor.blue() > 0)
                 {
-                    double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
-                    double blueToRed = (double)sensorColor.blue() / sensorColor.red();
-                    telemetry.addData("Red Ratio ", blueToRed);
-                    telemetry.addData("Green Ratio  ", blueToGreen);
+                    double redToGreen = (double)sensorColor.red() / sensorColor.green();
+                    double redToBlue = (double)sensorColor.red() / sensorColor.blue();
+                    telemetry.addData("Blue Ratio ", redToBlue);
+                    telemetry.addData("Green Ratio  ", redToGreen);
 
-                    if (blueToGreen > 1.3 && blueToRed > 2)
+                    if (redToGreen > 2 && redToBlue > 2)
                     {
                         state = 130;
                     }

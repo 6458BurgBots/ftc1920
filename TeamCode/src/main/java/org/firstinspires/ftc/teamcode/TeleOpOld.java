@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
-@TeleOp(name="TestBotOld", group="TeleOp")
-public class TestBotOld extends OpMode{
+@TeleOp(name="TeleOpOld", group="TeleOp")
+public class TeleOpOld extends OpMode{
 
     public static double SAMPLE_SERVO_CLOSED = 1;
     public static double SAMPLE_SERVO_OPEN = .5;
@@ -34,10 +34,25 @@ public class TestBotOld extends OpMode{
     View relativeLayout;
     protected Servo plateArmServo;
 
+    public void init_loop() {
+        if (moveHelper == null){
+            moveHelper = new MoveHelper(telemetry, hardwareMap);
+        }
+        if (gamepad1.a){ // Left stick is cardinal moves, rotation on right
+            moveHelper.joystickJacob = true;
+            telemetry.addData("Joystick setup", " Jacob's Way");
+        }
+        if (gamepad1.y) { // Left stick is rotation, cardinal moves on right
+            moveHelper.joystickJacob = false;
+            telemetry.addData("Joystick setup", " Thomas' Way");
+        }
+    }
 
     @Override
     public void init() {
-        moveHelper = new MoveHelper(telemetry, hardwareMap);
+        if (moveHelper == null){
+            moveHelper = new MoveHelper(telemetry, hardwareMap);
+        }
         moveHelper.init();
         //sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         //Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;

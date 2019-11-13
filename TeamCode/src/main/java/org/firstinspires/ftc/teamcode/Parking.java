@@ -18,34 +18,33 @@ public class Parking extends OpMode {
 
     public void init_loop() {
         if (gamepad1.a){ //outside
-            state = 16;
             isInside = false;
         }
         if (gamepad1.y) {//inside
-            state = 0;
+
             isInside = true;
         }
         if (gamepad1.b){
-                state = 16;
                 isRed = true;
-                strafeMultiplier = -1;
         }
         if (gamepad1.x){
-                state = 0;
                 isRed = false;
-                strafeMultiplier = 1;
         }
         if (isInside){
             telemetry.addData("Ending Position", "inside");
+            state = 0;
         }
         else {
             telemetry.addData("Ending Position","outside");
+            state = 16;
         }
         if (isRed){
             telemetry.addData("Alliance","red");
+            strafeMultiplier = -1;
         }
         else {
             telemetry.addData("Alliance","blue");
+            strafeMultiplier = 1;
         }
 
     }
