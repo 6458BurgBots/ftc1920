@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
 @TeleOp(name="TeleOpOld", group="TeleOp")
@@ -19,7 +20,9 @@ public class TeleOpOld extends OpMode{
 
     public static double SAMPLE_SERVO_CLOSED = 1;
     public static double SAMPLE_SERVO_OPEN = .5;
+
     MoveHelper moveHelper;
+    BuildPlateServoHelper buildPlateServoHelper;
     //DistanceSensor sensorRange;
     //ColorSensor sensorColor;
     //float hsvValues[] = {0F, 0F, 0F};
@@ -32,7 +35,6 @@ public class TeleOpOld extends OpMode{
     final double SCALE_FACTOR = 255;
     int relativeLayoutId;
     View relativeLayout;
-    protected Servo plateArmServo;
 
     public void init_loop() {
         if (moveHelper == null){
@@ -54,6 +56,9 @@ public class TeleOpOld extends OpMode{
             moveHelper = new MoveHelper(telemetry, hardwareMap);
         }
         moveHelper.init();
+        buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
+        buildPlateServoHelper.init();
+
         //sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         //Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
         moveHelper.resetEncoders();
@@ -64,8 +69,6 @@ public class TeleOpOld extends OpMode{
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         //relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         //relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-        plateArmServo = hardwareMap.servo.get("platearm");
-        plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
 
     }
 
@@ -78,11 +81,11 @@ public class TeleOpOld extends OpMode{
 
         if (gamepad1.right_trigger > 0) {
             telemetry.addData("plateArm:", "CLOSED");
-           plateArmServo.setPosition(SAMPLE_SERVO_CLOSED);
+            buildPlateServoHelper.Close();
         }
         if (gamepad1.left_trigger > 0) {
             telemetry.addData("plateArm:", "OPENED");
-            plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
+            buildPlateServoHelper.Open();
         }
  /*       if (range > longRange){                       Laser Rangefinder Wallfollow Logic
             moveHelper.rturn(1);
@@ -124,12 +127,5 @@ public class TeleOpOld extends OpMode{
         if (gamepad1.right_stick_button){
             moveHelper.runWithoutEncoders();
         }
-    }
-    public void open(){
-        plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
-    }
-
-    public void close(){
-        plateArmServo.setPosition(SAMPLE_SERVO_CLOSED);
     }
 }

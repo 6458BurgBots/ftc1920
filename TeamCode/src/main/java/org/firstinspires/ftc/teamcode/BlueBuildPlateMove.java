@@ -5,20 +5,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
 @Autonomous(name="BlueBuildPlateMove", group="Autonomous")
 public class BlueBuildPlateMove extends OpMode{
 
-    public static double SAMPLE_SERVO_CLOSED = 1;
-    public static double SAMPLE_SERVO_OPEN = .5;
     MoveHelper moveHelper;
+    BuildPlateServoHelper buildPlateServoHelper;
     DistanceSensor sensorRange;
     int state = 0;
     double lastTime;
     ColorSensor sensorColor;
-    protected Servo plateArmServo;
     public int long_move = -4700;
     boolean isInside;
 
@@ -54,13 +53,15 @@ public class BlueBuildPlateMove extends OpMode{
     public void init() {
         moveHelper = new MoveHelper(telemetry, hardwareMap);
         moveHelper.init();
+        buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
+        buildPlateServoHelper.init();
         //sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
-        plateArmServo = hardwareMap.servo.get("platearm");
-        plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
+
+
     }
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
     // parameters include the newState, which refers to the new value being assigned to state at end of duration
@@ -119,7 +120,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 66;
                 break;
             case 66:
-                plateArmServo.setPosition(SAMPLE_SERVO_CLOSED);
+                buildPlateServoHelper.Close();
                 advanceToStateAfterTime(70,1);
                 break;
             case 70: //Move backward with building plate.
@@ -133,7 +134,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 76;
                 break;
             case 76:
-                plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
+                buildPlateServoHelper.Open();
                 advanceToStateAfterTime(80,1);
                 break;
             case 80://Strafe towards center of field.

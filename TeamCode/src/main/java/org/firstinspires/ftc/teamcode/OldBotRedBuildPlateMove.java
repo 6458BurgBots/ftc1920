@@ -2,24 +2,26 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
-import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
 
-@Autonomous(name="RedBuildPlateMove", group="Autonomous")
-public class RedBuildPlateMove extends OpMode{
+@Disabled
+@Autonomous(name="OldRedBuildPlateMove", group="Autonomous")
+public class OldBotRedBuildPlateMove extends OpMode{
 
     public static double SAMPLE_SERVO_CLOSED = 1;
     public static double SAMPLE_SERVO_OPEN = .5;
     MoveHelper moveHelper;
-    BuildPlateServoHelper buildPlateServoHelper;
     DistanceSensor sensorRange;
     int state = 0;
     double lastTime;
     ColorSensor sensorColor;
+    protected Servo plateArmServo;
     public int long_move = -4700;
     boolean isInside;
 
@@ -55,13 +57,13 @@ public class RedBuildPlateMove extends OpMode{
     public void init() {
         moveHelper = new MoveHelper(telemetry, hardwareMap);
         moveHelper.init();
-        buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
-        buildPlateServoHelper.init();
         //sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
+        plateArmServo = hardwareMap.servo.get("platearm");
+        plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
     }
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
     // parameters include the newState, which refers to the new value being assigned to state at end of duration
@@ -108,6 +110,7 @@ public class RedBuildPlateMove extends OpMode{
                 moveHelper.resetEncoders();
                 state = 60;
                 break;
+
             case 60: //Move forward towards building plate.
                 moveHelper.encoderPowerLevel = .2;
                 moveHelper.runMotorsToPosition(-2000,-2000,-2000,-2000);
@@ -119,7 +122,7 @@ public class RedBuildPlateMove extends OpMode{
                 state = 66;
                 break;
             case 66:
-                buildPlateServoHelper.Close();
+                plateArmServo.setPosition(SAMPLE_SERVO_CLOSED);
                 advanceToStateAfterTime(70,1);
                 break;
             case 70: //Move backward with building plate.
@@ -133,7 +136,7 @@ public class RedBuildPlateMove extends OpMode{
                 state = 76;
                 break;
             case 76:
-                buildPlateServoHelper.Open();
+                plateArmServo.setPosition(SAMPLE_SERVO_OPEN);
                 advanceToStateAfterTime(80,1);
                 break;
             case 80://Strafe towards center of field.
