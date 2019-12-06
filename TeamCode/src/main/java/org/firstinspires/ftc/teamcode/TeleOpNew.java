@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Helper.BlockArmServoHelper;
+import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 import org.firstinspires.ftc.teamcode.Helper.PickupArmHelper;
 
@@ -20,6 +21,7 @@ public class TeleOpNew extends OpMode{
     private DcMotor RightFeedMotor;
     double blockArmPosition = 0;
     PickupArmHelper pickupArmHelper;
+    BuildPlateServoHelper buildPlateServoHelper;
 
     @Override
     public void init() {
@@ -30,6 +32,8 @@ public class TeleOpNew extends OpMode{
         blockArmServoHelper.init();
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
+        buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
+        buildPlateServoHelper.init();
         //moveHelper.runWithoutEncoders();
         LeftFeedMotor = hardwareMap.dcMotor.get("leftfeed");
         RightFeedMotor = hardwareMap.dcMotor.get("rightfeed");
@@ -44,6 +48,7 @@ public class TeleOpNew extends OpMode{
     public void loop() {
         telemetry.addData("BlockArmPosition",blockArmPosition);
         moveHelper.checkTeleOp(gamepad1,gamepad2);
+        buildPlateServoHelper.checkTeleOp(gamepad1, gamepad2);
         pickupArmHelper.checkTeleOp(gamepad1, gamepad2);
         double LY = gamepad1.left_trigger/4 -gamepad1.right_trigger/4;
 

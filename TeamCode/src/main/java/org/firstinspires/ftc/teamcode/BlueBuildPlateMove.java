@@ -60,8 +60,7 @@ public class BlueBuildPlateMove extends OpMode{
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
-
-
+        buildPlateServoHelper.Close();
     }
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
     // parameters include the newState, which refers to the new value being assigned to state at end of duration
@@ -93,7 +92,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 40;
                 break;
             case 40: //Strafe left
-                moveHelper.runMotorsToPosition(800,-800,800,-800);
+                moveHelper.runMotorsToPosition(-600,600,-600,600);
                 advanceToStateAfterTime(45,1);
                 break;
             case 45:
@@ -101,7 +100,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 50;
                 break;
             case 50: //Move backwards to square against wall
-                moveHelper.runMotorsToPosition(100,100,100,100);
+                moveHelper.runMotorsToPosition(-300,-300,-300,-300);
                 advanceToStateAfterTime(55,1);
                 break;
             case 55:
@@ -111,7 +110,7 @@ public class BlueBuildPlateMove extends OpMode{
 
             case 60: //Move forward towards building plate.
                 moveHelper.encoderPowerLevel = .2;
-                moveHelper.runMotorsToPosition(-2000,-2000,-2000,-2000);
+                moveHelper.runMotorsToPosition(1600,1600,1600,1600);
                 advanceToStateAfterTime(65,5);
                 break;
             case 65:
@@ -120,12 +119,12 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 66;
                 break;
             case 66:
-                buildPlateServoHelper.Close();
+                buildPlateServoHelper.Open();
                 advanceToStateAfterTime(70,1);
                 break;
             case 70: //Move backward with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(2850,2850,2850,2850);
+                moveHelper.runMotorsToPosition(-1850,-1850,-1850,-1850);
                 advanceToStateAfterTime(75, 2);
                 break;
             case 75:
@@ -134,11 +133,11 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 76;
                 break;
             case 76:
-                buildPlateServoHelper.Open();
+                buildPlateServoHelper.Close();
                 advanceToStateAfterTime(80,1);
                 break;
             case 80://Strafe towards center of field.
-                moveHelper.runMotorsToPosition(-2430,2430,-2430,2430);
+                moveHelper.runMotorsToPosition(1430,-1430,1430,-1430);
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
@@ -147,10 +146,10 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 90://Move forward away from wall
                 if (isInside){
-                    moveHelper.runMotorsToPosition(-1400,-1400,-1400,-1400);
+                    moveHelper.runMotorsToPosition(1100,1100,1100,1100);
                 }
                 else {
-                    moveHelper.runMotorsToPosition(-300, -300, -300, -300);
+                    moveHelper.runMotorsToPosition(300, 300, 300, 300);
                 }
                 advanceToStateAfterTime(95, 1);
                 break;
@@ -159,7 +158,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 100;
                 break;
             case 100://Turn right towards middle of field
-                moveHelper.runMotorsToPosition(-1050,1050,1050,-1050);
+                moveHelper.runMotorsToPosition(-850,850,850,-850);
                 advanceToStateAfterTime(115, 1);
                 break;
             case 115:
@@ -168,7 +167,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 120;
                 break;
             case 120:
-                moveHelper.omniDrive(0,-.25,0);
+                moveHelper.omniDrive(0,.25,0);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
                 {
                     double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
