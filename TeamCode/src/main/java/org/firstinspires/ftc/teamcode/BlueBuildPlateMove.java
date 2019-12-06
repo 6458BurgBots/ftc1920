@@ -100,7 +100,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 50;
                 break;
             case 50: //Move backwards to square against wall
-                moveHelper.runMotorsToPosition(-300,-300,-300,-300);
+                moveHelper.runMotorsToPosition(-400,-400,-400,-400);
                 advanceToStateAfterTime(55,1);
                 break;
             case 55:
@@ -122,9 +122,9 @@ public class BlueBuildPlateMove extends OpMode{
                 buildPlateServoHelper.Open();
                 advanceToStateAfterTime(70,1);
                 break;
-            case 70: //Move backward with building plate.
+            case 70: //Move back towards wall with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(-1850,-1850,-1850,-1850);
+                moveHelper.runMotorsToPosition(-930,-930,-930,-930);
                 advanceToStateAfterTime(75, 2);
                 break;
             case 75:
@@ -132,42 +132,48 @@ public class BlueBuildPlateMove extends OpMode{
                 moveHelper.resetEncoders();
                 state = 76;
                 break;
-            case 76:
+            case 76: //Turn with building plate.
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(1000,-1000,-1000,1000);
+                advanceToStateAfterTime(77, 2);
+                break;
+            case 77:
+                moveHelper.encoderPowerLevel = 1;
+                moveHelper.resetEncoders();
+                state = 79;
+                break;
+            case 79:
                 buildPlateServoHelper.Close();
                 advanceToStateAfterTime(80,1);
                 break;
-            case 80://Strafe towards center of field.
-                moveHelper.runMotorsToPosition(1430,-1430,1430,-1430);
+            case 80: //Turn with building plate.
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(500,500,500,500);
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
+                moveHelper.encoderPowerLevel = 1;
                 moveHelper.resetEncoders();
-                state = 90;
+                state = 95;
                 break;
-            case 90://Move forward away from wall
+            case 90://Strafe left/Right awayto from wall
                 if (isInside){
+                    // TODO - change this
                     moveHelper.runMotorsToPosition(1100,1100,1100,1100);
                 }
                 else {
+                    // TODO - change this
                     moveHelper.runMotorsToPosition(300, 300, 300, 300);
                 }
                 advanceToStateAfterTime(95, 1);
                 break;
             case 95:
                 moveHelper.resetEncoders();
-                state = 100;
-                break;
-            case 100://Turn right towards middle of field
-                moveHelper.runMotorsToPosition(-850,850,850,-850);
-                advanceToStateAfterTime(115, 1);
-                break;
-            case 115:
-              //  moveHelper.resetEncoders();
-                moveHelper.runUsingEncoders();
                 state = 120;
                 break;
+
             case 120:
-                moveHelper.omniDrive(0,.25,0);
+                moveHelper.omniDrive(0,-.6,0);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
                 {
                     double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
