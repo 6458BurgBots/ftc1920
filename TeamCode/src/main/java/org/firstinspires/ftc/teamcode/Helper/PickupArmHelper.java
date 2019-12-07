@@ -21,11 +21,13 @@ public class PickupArmHelper extends OperationHelper {
     public static double WRIST_HORIZONTAL_SERVO_MIN = 0;
     public static double WRIST_VERTICAL_SERVO_MAX = 1;
     public static double WRIST_VERTICAL_SERVO_MIN = 0;
+    public static double GRIP_SERVO_MAX = 1.0;
+    public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
     public static double WRIST_HORIZONTAL_SERVO_SPEED = .05;
     public static double WRIST_VERTICAL_SERVO_SPEED = .05;
     public static double EXTENSION_SPEED = .5;
-    public static double ELEVATION_SPEED = .5;
+    public static double ELEVATION_SPEED = .65;
 
     public PickupArmHelper(Telemetry t, HardwareMap h)
     {
@@ -80,12 +82,19 @@ public class PickupArmHelper extends OperationHelper {
 
     public void checkTeleOp(Gamepad gamepad1, Gamepad gamepad2) {
         if (gamepad2.right_trigger != 0){
-            gripServo.setPosition(gamepad2.right_trigger * .5);
+            double current = gripServo.getPosition();
+            current += GRIP_SERVO_SPEED * gamepad2.right_trigger;
+            current = Range.clip(current, GRIP_SERVO_MIN, GRIP_SERVO_MAX );
+            gripServo.setPosition(current);
+
             telemetry.addData("Right trigger", gamepad2.right_trigger);
             telemetry.addData("Grip position", gripServo.getPosition());
         }
         if (gamepad2.left_trigger != 0){
-            gripServo.setPosition(gamepad2.left_trigger * -.5);
+            double current = gripServo.getPosition();
+            current -= GRIP_SERVO_SPEED * gamepad2.left_trigger;
+            current = Range.clip(current, GRIP_SERVO_MIN, GRIP_SERVO_MAX );
+            gripServo.setPosition(current);
             telemetry.addData("Left trigger", gamepad2.left_trigger);
             telemetry.addData("Grip position", gripServo.getPosition());
         }

@@ -100,6 +100,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 50;
                 break;
             case 50: //Move backwards to square against wall
+                moveHelper.encoderPowerLevel = .3;
                 moveHelper.runMotorsToPosition(-400,-400,-400,-400);
                 advanceToStateAfterTime(55,1);
                 break;
@@ -124,8 +125,8 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 70: //Move back towards wall with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(-930,-930,-930,-930);
-                advanceToStateAfterTime(75, 2);
+                moveHelper.runMotorsToPosition(-1130,-1130,-1130,-1130);
+                advanceToStateAfterTime(75, 2.5);
                 break;
             case 75:
                 moveHelper.encoderPowerLevel = 1;
@@ -156,7 +157,7 @@ public class BlueBuildPlateMove extends OpMode{
                 moveHelper.resetEncoders();
                 state = 95;
                 break;
-            case 90://Strafe left/Right awayto from wall
+            case 90://Strafe left/Right to get in line with end position.
                 if (isInside){
                     // TODO - change this
                     moveHelper.runMotorsToPosition(1100,1100,1100,1100);
@@ -169,11 +170,12 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 95:
                 moveHelper.resetEncoders();
-                state = 120;
+                //moveHelper.runWithoutEncoders();
+                state = 140;
                 break;
 
-            case 120:
-                moveHelper.omniDrive(0,-.6,0);
+            /* case 120:
+                moveHelper.omniDrive(0,-.25,0);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
                 {
                     double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
@@ -181,7 +183,7 @@ public class BlueBuildPlateMove extends OpMode{
                     telemetry.addData("Red Ratio ", blueToRed);
                     telemetry.addData("Green Ratio  ", blueToGreen);
 
-                    if (blueToGreen > 1.3 && blueToRed > 2)
+                    if (blueToGreen > 1.3 && blueToRed > 1.75)
                     {
                         state = 130;
                     }
@@ -189,12 +191,14 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 130:
                 moveHelper.omniDrive(0,0,0);
+                break; */
+            case 140:
+                moveHelper.runMotorsToPosition(-2200, -2200,-2200,-2200);
+                advanceToStateAfterTime(150, 3);
                 break;
-                /*need to add color sensor stuff for moving to the middle of the field.
-                Move the color sensor closer to the floor so we can have more accurate readings
-                We might have to turn instead of strafe the whole way so that the color sensor stops the robot over the line
-
-*/
+            case 150:
+                moveHelper.resetEncoders();
+                break;
 
     }
         telemetry.addData("Red  ", sensorColor.red());
