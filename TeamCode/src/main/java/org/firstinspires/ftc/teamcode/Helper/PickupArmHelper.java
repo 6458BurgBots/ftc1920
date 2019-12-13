@@ -17,11 +17,13 @@ public class PickupArmHelper extends OperationHelper {
     protected Servo gripServo;  // Continuous rotation
     protected Servo wristHorizontalServo;
     protected Servo wristVerticalServo;
+    private static final int UPPER_LIMIT = 3600;
+    private double desiredPosition = 0;
     public static double WRIST_HORIZONTAL_SERVO_MAX = 1;
     public static double WRIST_HORIZONTAL_SERVO_MIN = 0;
     public static double WRIST_VERTICAL_SERVO_MAX = 1;
     public static double WRIST_VERTICAL_SERVO_MIN = 0;
-    public static double GRIP_SERVO_MAX = 1.0;
+    public static double GRIP_SERVO_MAX = 0.4;
     public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
     public static double WRIST_HORIZONTAL_SERVO_SPEED = .05;
@@ -59,6 +61,9 @@ public class PickupArmHelper extends OperationHelper {
         if (hardwareMap.dcMotor.contains("extensionmotor")) {
             extensionMotor = hardwareMap.dcMotor.get("extensionmotor");
         }
+        elevationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);        //Turn into if statement
+        elevationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     private void checkMissingComponents() {
@@ -129,5 +134,33 @@ public class PickupArmHelper extends OperationHelper {
             extensionMotor.setPower(0);
         }
         checkMissingComponents();
+    }
+    public int getPosition() {
+        return elevationMotor.getCurrentPosition();
+    }
+    public int desiredPosition() {
+        return elevationMotor.getCurrentPosition();
+    }
+
+    public void setPower(double power) {
+        elevationMotor.setPower(power);
+    }
+
+    public void raise(double raiseAmount){
+        desiredPosition += raiseAmount * 150;
+        elevationMotor.setTargetPosition((int)desiredPosition);
+        elevationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevationMotor.setPower(.6);
+    }
+
+    public void holdPosition() {
+
+        elevationMotor.setTargetPosition(elevationMotor.getCurrentPosition());
+        elevationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevationMotor.setPower(1);
+    }
+
+    public void resetHold () {
+        elevationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 }

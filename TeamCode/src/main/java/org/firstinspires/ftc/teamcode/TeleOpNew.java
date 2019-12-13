@@ -22,6 +22,8 @@ public class TeleOpNew extends OpMode{
     double blockArmPosition = 0;
     PickupArmHelper pickupArmHelper;
     BuildPlateServoHelper buildPlateServoHelper;
+   // public static double BLOCK_ARM_SERVO_CLOSED = 1;      //Fix later
+   // public static double BLOCK_ARM_SERVO_OPEN = 0.5;
 
     @Override
     public void init() {
@@ -63,20 +65,28 @@ public class TeleOpNew extends OpMode{
             moveHelper.runWithoutEncoders();
         }
 
-        if (gamepad1.dpad_down) {
-            blockArmPosition -= .002;
-        }
-        if (gamepad1.dpad_up) {
-            blockArmPosition += .002;
-        }
+//        if (gamepad1.b) {
+   //     blockArmServoHelper.GoToPosition(-1);
+
+//        }
+//        if (gamepad1.x) {
+//        blockArmServoHelper.GoToPosition(-.5);
+
+//        }
+
         if (gamepad1.x) {
-            blockArmPosition = 0;
+            blockArmPosition += 1;
+
         }
-        if (gamepad1.a) {
-            blockArmPosition = .5;
-        }
+//        if (gamepad1.a) {
+//            blockArmPosition = .5;      //change to b if it works
+//        }
         if (gamepad1.b) {
-            blockArmPosition = 1;
+            blockArmPosition -= 1;
+
+        }
+        if (gamepad2.left_stick_y != 0){
+            pickupArmHelper.raise(gamepad2.left_stick_y);       //Could be negative
         }
 
         blockArmServoHelper.GoToPosition(blockArmPosition);

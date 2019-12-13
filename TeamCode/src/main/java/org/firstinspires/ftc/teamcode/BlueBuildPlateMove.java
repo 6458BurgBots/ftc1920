@@ -108,7 +108,6 @@ public class BlueBuildPlateMove extends OpMode{
                 moveHelper.resetEncoders();
                 state = 60;
                 break;
-
             case 60: //Move forward towards building plate.
                 moveHelper.encoderPowerLevel = .2;
                 moveHelper.runMotorsToPosition(1600,1600,1600,1600);
@@ -153,25 +152,13 @@ public class BlueBuildPlateMove extends OpMode{
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
-                moveHelper.encoderPowerLevel = 1;
                 moveHelper.resetEncoders();
                 state = 95;
-                break;
-            case 90://Strafe left/Right to get in line with end position.
-                if (isInside){
-                    // TODO - change this
-                    moveHelper.runMotorsToPosition(1100,1100,1100,1100);
-                }
-                else {
-                    // TODO - change this
-                    moveHelper.runMotorsToPosition(300, 300, 300, 300);
-                }
-                advanceToStateAfterTime(95, 1);
                 break;
             case 95:
                 moveHelper.resetEncoders();
                 //moveHelper.runWithoutEncoders();
-                state = 140;
+                state = 120;
                 break;
 
             /* case 120:
@@ -192,8 +179,28 @@ public class BlueBuildPlateMove extends OpMode{
             case 130:
                 moveHelper.omniDrive(0,0,0);
                 break; */
+            case 120://Strafe left/Right to get in line with end position.
+                if (isInside){
+                    moveHelper.runMotorsToPosition(1000,-1000,1000,-1000);
+                }
+                else {
+                    moveHelper.runMotorsToPosition(-1000, 1000, -1000, 1000);
+                }
+                advanceToStateAfterTime(125, 1);
+                break;
+            case 125:
+                moveHelper.resetEncoders();
+                state = 130;
+                break;
+            case 130:
+                moveHelper.runMotorsToPosition(400, 400,400,400);
+                advanceToStateAfterTime(135, 1);
+            case 135:
+                moveHelper.resetEncoders();
+                state = 140;
+                break;
             case 140:
-                moveHelper.runMotorsToPosition(-2200, -2200,-2200,-2200);
+                moveHelper.runMotorsToPosition(-2000, -2000,-2000,-2000);
                 advanceToStateAfterTime(150, 3);
                 break;
             case 150:

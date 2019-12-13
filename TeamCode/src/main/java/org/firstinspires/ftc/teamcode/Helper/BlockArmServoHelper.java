@@ -1,5 +1,3 @@
-////////////////CRACKED MAGNET, ROBOT STRAFING MESSED UP
-
 package org.firstinspires.ftc.teamcode.Helper;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;

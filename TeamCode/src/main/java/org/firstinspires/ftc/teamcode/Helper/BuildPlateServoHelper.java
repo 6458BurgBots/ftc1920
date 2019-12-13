@@ -9,8 +9,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class BuildPlateServoHelper extends OperationHelper {
     protected Servo plateArmServo1;
     protected Servo plateArmServo2;
-    public static double SAMPLE_SERVO_CLOSED = 1;
-    public static double SAMPLE_SERVO_OPEN = .5;
+    public static double SAMPLE_SERVO_CLOSED = .5;
+    public static double SAMPLE_SERVO_OPEN = 1;
 
     public BuildPlateServoHelper(Telemetry t, HardwareMap h) {
         super(t, h);

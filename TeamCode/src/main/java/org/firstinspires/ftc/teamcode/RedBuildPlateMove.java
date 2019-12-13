@@ -109,13 +109,13 @@ public class RedBuildPlateMove extends OpMode{
                 state = 60;
                 break;
             case 60: //Move forward towards building plate.
-                moveHelper.encoderPowerLevel = .2;
+                moveHelper.encoderPowerLevel = .5;
                 moveHelper.runMotorsToPosition(-2000,-2000,-2000,-2000);
                 advanceToStateAfterTime(65,5);
                 break;
             case 65:
                 moveHelper.resetEncoders();
-                moveHelper.encoderPowerLevel = 1;
+                moveHelper.encoderPowerLevel = .5;
                 state = 66;
                 break;
             case 66:
@@ -124,25 +124,26 @@ public class RedBuildPlateMove extends OpMode{
                 break;
             case 70: //Move backward with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(2850,2850,2850,2850);
-                advanceToStateAfterTime(75, 2);
+                moveHelper.runMotorsToPosition(-1130,-1130,-1130,-1130);
+                advanceToStateAfterTime(73, 2);
                 break;
-            case 75:
-                moveHelper.encoderPowerLevel = 1;
+            case 73:
+                moveHelper.encoderPowerLevel = .5;
                 moveHelper.resetEncoders();
-                state = 76;
+                state = 74;
                 break;
-            case 76:
+            case 74: //turn with build plate
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(-1000, 1000, -1000, 1000);
+                advanceToStateAfterTime(76, 2);
+            case 76: //Open plate movers
                 buildPlateServoHelper.Open();
                 advanceToStateAfterTime(80,1);
                 break;
-            case 80://Strafe towards center of field.
-                moveHelper.runMotorsToPosition(2430,-2430,2430,-2430);
-                advanceToStateAfterTime(85, 2);
-                break;
-            case 85:
+            case 80:
+                moveHelper.encoderPowerLevel = .5;
                 moveHelper.resetEncoders();
-                state = 90;
+                state = 85;
                 break;
             case 90://Move forward away from wall
                 if (isInside){
