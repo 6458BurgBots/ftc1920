@@ -29,7 +29,7 @@ public class PickupArmHelper extends OperationHelper {
     public static double WRIST_HORIZONTAL_SERVO_SPEED = .05;
     public static double WRIST_VERTICAL_SERVO_SPEED = .05;
     public static double EXTENSION_SPEED = .5;
-    public static double ELEVATION_SPEED = .65;
+    public static double ELEVATION_SPEED = 1;
 
     public PickupArmHelper(Telemetry t, HardwareMap h)
     {
