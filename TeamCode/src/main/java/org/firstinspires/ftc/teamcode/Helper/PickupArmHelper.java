@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.Helper;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import java.awt.font.NumericShaper;
 
 public class PickupArmHelper extends OperationHelper {
@@ -17,8 +14,6 @@ public class PickupArmHelper extends OperationHelper {
     protected Servo gripServo;  // Continuous rotation
     protected Servo wristHorizontalServo;
     protected Servo wristVerticalServo;
-    private static final int UPPER_LIMIT = 3600;
-    private double desiredPosition = 0;
     public static double WRIST_HORIZONTAL_SERVO_MAX = 1;
     public static double WRIST_HORIZONTAL_SERVO_MIN = 0;
     public static double WRIST_VERTICAL_SERVO_MAX = 1;
@@ -30,6 +25,9 @@ public class PickupArmHelper extends OperationHelper {
     public static double WRIST_VERTICAL_SERVO_SPEED = .05;
     public static double EXTENSION_SPEED = .5;
     public static double ELEVATION_SPEED = 1;
+    private static final int LOWER_LIMIT = -800; // maximum "height" for elevation arm
+    private int desiredPosition = 0;
+
 
     public PickupArmHelper(Telemetry t, HardwareMap h)
     {
@@ -121,8 +119,11 @@ public class PickupArmHelper extends OperationHelper {
             telemetry.addData("Wrist vertical position", wristVerticalServo.getPosition());
 
         }
-        double LY = Range.clip(gamepad2.left_stick_y, -1, 1);
-        elevationMotor.setPower(LY * ELEVATION_SPEED);
+        //double LY = Range.clip(gamepad2.left_stick_y, -1, 1);
+        //elevationMotor.setPower(LY * ELEVATION_SPEED);
+        if (gamepad2.left_stick_y != 0){
+            raise(gamepad2.left_stick_y);
+        }
 
         if (gamepad2.dpad_up) {
             extensionMotor.setPower(EXTENSION_SPEED);
@@ -135,32 +136,42 @@ public class PickupArmHelper extends OperationHelper {
         }
         checkMissingComponents();
     }
+
     public int getPosition() {
-        return elevationMotor.getCurrentPosition();
-    }
-    public int desiredPosition() {
-        return elevationMotor.getCurrentPosition();
+            return elevationMotor.getCurrentPosition();
     }
 
-    public void setPower(double power) {
-        elevationMotor.setPower(power);
-    }
+//    public int desiredPosition() {
+//        return elevationMotor.getCurrentPosition();
+//    }
+
+//    public void setPower(double power) {
+//        elevationMotor.setPower(power);
+//    }
 
     public void raise(double raiseAmount){
-        desiredPosition += raiseAmount * 150;
+        desiredPosition += raiseAmount * 10;
+        if (desiredPosition < LOWER_LIMIT) {
+            desiredPosition = LOWER_LIMIT;
+        }
         elevationMotor.setTargetPosition((int)desiredPosition);
+        elevationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevationMotor.setPower(.5);
+    }
+
+    public void holdPosition() {
+        elevationMotor.setTargetPosition(desiredPosition);
         elevationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevationMotor.setPower(.6);
     }
 
-    public void holdPosition() {
-
-        elevationMotor.setTargetPosition(elevationMotor.getCurrentPosition());
-        elevationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevationMotor.setPower(1);
+    public void resetHold () {
+        elevationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        desiredPosition = elevationMotor.getCurrentPosition();
+        elevationMotor.setPower(0);
     }
 
-    public void resetHold () {
-        elevationMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void setHold() {
+        desiredPosition = elevationMotor.getCurrentPosition();
     }
 }

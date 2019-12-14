@@ -6,14 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
+import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
 @Autonomous(name="RedBuildPlateMove", group="Autonomous")
 public class RedBuildPlateMove extends OpMode{
 
-    public static double SAMPLE_SERVO_CLOSED = 1;
-    public static double SAMPLE_SERVO_OPEN = .5;
     MoveHelper moveHelper;
     BuildPlateServoHelper buildPlateServoHelper;
     DistanceSensor sensorRange;
@@ -62,6 +60,7 @@ public class RedBuildPlateMove extends OpMode{
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
+        buildPlateServoHelper.Close();
     }
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
     // parameters include the newState, which refers to the new value being assigned to state at end of duration
@@ -93,7 +92,8 @@ public class RedBuildPlateMove extends OpMode{
                 state = 40;
                 break;
             case 40: //Strafe left
-                moveHelper.runMotorsToPosition(-800,800,-800,800);
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(800,-800,800,-800);
                 advanceToStateAfterTime(45,1);
                 break;
             case 45:
@@ -101,7 +101,8 @@ public class RedBuildPlateMove extends OpMode{
                 state = 50;
                 break;
             case 50: //Move backwards to square against wall
-                moveHelper.runMotorsToPosition(100,100,100,100);
+                moveHelper.encoderPowerLevel = .3;
+                moveHelper.runMotorsToPosition(-600,-600,-600,-600);
                 advanceToStateAfterTime(55,1);
                 break;
             case 55:
@@ -109,74 +110,96 @@ public class RedBuildPlateMove extends OpMode{
                 state = 60;
                 break;
             case 60: //Move forward towards building plate.
-                moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(-2000,-2000,-2000,-2000);
+                moveHelper.encoderPowerLevel = .3;
+                moveHelper.runMotorsToPosition(1600,1600,1600,1600);
                 advanceToStateAfterTime(65,5);
                 break;
             case 65:
                 moveHelper.resetEncoders();
-                moveHelper.encoderPowerLevel = .5;
+                moveHelper.encoderPowerLevel = 1;
                 state = 66;
                 break;
             case 66:
-                buildPlateServoHelper.Close();
+                buildPlateServoHelper.Open();
                 advanceToStateAfterTime(70,1);
                 break;
-            case 70: //Move backward with building plate.
+            case 70: //Move back towards wall with building plate.
                 moveHelper.encoderPowerLevel = .5;
                 moveHelper.runMotorsToPosition(-1130,-1130,-1130,-1130);
-                advanceToStateAfterTime(73, 2);
-                break;
-            case 73:
-                moveHelper.encoderPowerLevel = .5;
-                moveHelper.resetEncoders();
-                state = 74;
-                break;
-            case 74: //turn with build plate
-                moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(-1000, 1000, -1000, 1000);
-                advanceToStateAfterTime(76, 2);
-            case 76: //Open plate movers
-                buildPlateServoHelper.Open();
-                advanceToStateAfterTime(80,1);
+                advanceToStateAfterTime(80, 2.5);
                 break;
             case 80:
+                moveHelper.encoderPowerLevel = 1;
+                moveHelper.resetEncoders();
+                state = 90;
+                break;
+            case 90: //Turn with building plate.
                 moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(-1300,1300,1300,-1300);
+                advanceToStateAfterTime(100, 2);
+                break;
+            case 100:
+                moveHelper.encoderPowerLevel = 1;
                 moveHelper.resetEncoders();
-                state = 85;
+                state = 110;
                 break;
-            case 90://Move forward away from wall
-                if (isInside){
-                    moveHelper.runMotorsToPosition(-1400,-1400,-1400,-1400);
-                }
-                else {
-                    moveHelper.runMotorsToPosition(-300, -300, -300, -300);
-                }
-                advanceToStateAfterTime(95, 1);
-                break;
-            case 95:
-                moveHelper.resetEncoders();
-                state = 100;
-                break;
-            case 100://Turn right towards middle of field
-                moveHelper.runMotorsToPosition(1050,-1050,-1050,1050);
-                advanceToStateAfterTime(115, 1);
-                break;
-            case 115:
-              //  moveHelper.resetEncoders();
-                moveHelper.runUsingEncoders();
-                state = 120;
+            case 110:
+                buildPlateServoHelper.Close();
+                advanceToStateAfterTime(80,1);
                 break;
             case 120:
-                moveHelper.omniDrive(0,-.25,0);
-                if (sensorColor.red() > 30 && sensorColor.green() > 0 && sensorColor.blue() > 0)
-                {
-                    double redToGreen = (double)sensorColor.red() / sensorColor.green();
-                    double redToBlue = (double)sensorColor.red() / sensorColor.blue();
-                    telemetry.addData("Blue Ratio ", redToBlue);
-                    telemetry.addData("Green Ratio  ", redToGreen);
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(650,650,650,650);
+                advanceToStateAfterTime(130, 2);
+                break;
+            case 130:
+                moveHelper.resetEncoders();
+                state = 140;
+                break;
+            case 140:
+                moveHelper.resetEncoders();
+                //moveHelper.runWithoutEncoders();
+                state = 150;
+                break;
 
-                    if (redToGreen > 2 && redToBlue > 2)
+
+            case 150://Strafe left/Right to get in line with end position.
+                if (isInside){
+                    moveHelper.runMotorsToPosition(-1000,1000,-1000,1000);
+                }
+                else {
+                    moveHelper.runMotorsToPosition(1000, -1000, 1000, -1000);
+                }
+                advanceToStateAfterTime(160, 1);
+                break;
+            case 160:
+                moveHelper.resetEncoders();
+                state = 170;
+                break;
+            case 170:
+                moveHelper.runMotorsToPosition(400, 400,400,400);
+                advanceToStateAfterTime(180, 1);
+            case 180:
+                moveHelper.resetEncoders();
+                state = 190;
+                break;
+            case 190:
+                moveHelper.runMotorsToPosition(-2000, -2000,-2000,-2000);
+                advanceToStateAfterTime(200, 3);
+                break;
+            case 200:
+                moveHelper.resetEncoders();
+                break;
+/* case 120:
+                moveHelper.omniDrive(0,-.25,0);
+                if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)
+                {
+                    double blueToGreen = (double)sensorColor.blue() / sensorColor.green();
+                    double blueToRed = (double)sensorColor.blue() / sensorColor.red();
+                    telemetry.addData("Red Ratio ", blueToRed);
+                    telemetry.addData("Green Ratio  ", blueToGreen);
+
+                    if (blueToGreen > 1.3 && blueToRed > 1.75)
                     {
                         state = 130;
                     }
@@ -184,17 +207,11 @@ public class RedBuildPlateMove extends OpMode{
                 break;
             case 130:
                 moveHelper.omniDrive(0,0,0);
-                break;
-                /*need to add color sensor stuff for moving to the middle of the field.
-                Move the color sensor closer to the floor so we can have more accurate readings
-                We might have to turn instead of strafe the whole way so that the color sensor stops the robot over the line
-
-*/
-
+                break; */
     }
-        telemetry.addData("Red  ", sensorColor.red());
+/*        telemetry.addData("Red", sensorColor.red());
         telemetry.addData("Green", sensorColor.green());
-        telemetry.addData("Blue ", sensorColor.blue());
+        telemetry.addData("Blue", sensorColor.blue()); */
         telemetry.addData("State", state);
         telemetry.update();
     }

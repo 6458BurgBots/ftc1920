@@ -134,7 +134,7 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 76: //Turn with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(1000,-1000,-1000,1000);
+                moveHelper.runMotorsToPosition(1100,-1100,-1100,1100);
                 advanceToStateAfterTime(77, 2);
                 break;
             case 77:
@@ -148,7 +148,7 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 80: //Turn with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(500,500,500,500);
+                moveHelper.runMotorsToPosition(650,650,650,650);
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
@@ -208,9 +208,9 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
 
     }
-        telemetry.addData("Red  ", sensorColor.red());
+/*        telemetry.addData("Red", sensorColor.red());
         telemetry.addData("Green", sensorColor.green());
-        telemetry.addData("Blue ", sensorColor.blue());
+        telemetry.addData("Blue", sensorColor.blue()); */
         telemetry.addData("State", state);
         telemetry.update();
     }

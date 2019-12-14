@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class MoveHelper extends OperationHelper {
 
+    private double powerMultiple = .75;
 
     private static final double ENCODER_POWER_LEVEL = 1;
     // declares the motors; gives them names we will use to call them later
@@ -39,6 +40,14 @@ public class MoveHelper extends OperationHelper {
         FRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void SetHighPower() {
+        powerMultiple = .75;
+    }
+
+    public void SetLowPower() {
+        powerMultiple =.33;
     }
 
     public void omniDrive(double lx,double ly, double rx){
@@ -182,13 +191,19 @@ public class MoveHelper extends OperationHelper {
 
          // Jacob wants the sticks reversed for driving.
         if (joystickJacob) {
-            LY = gamepad1.left_stick_y*3/4;
-            LX = gamepad1.left_stick_x*3/4;
-            RX = gamepad1.right_stick_x*3/4;
+            LY = gamepad1.left_stick_y*powerMultiple;
+            LX = gamepad1.left_stick_x*powerMultiple;
+            RX = gamepad1.right_stick_x*powerMultiple;
         } else {
-            LY = gamepad1.right_stick_y*3/4;
-            LX = gamepad1.right_stick_x*3/4;
-            RX = gamepad1.left_stick_x*3/4;
+            LY = gamepad1.right_stick_y*powerMultiple;
+            LX = gamepad1.right_stick_x*powerMultiple;
+            RX = gamepad1.left_stick_x*powerMultiple;
+        }
+
+        if (gamepad1.a) {
+            SetLowPower();
+        } else if (gamepad1.y) {
+            SetHighPower();
         }
 
 
@@ -200,6 +215,8 @@ public class MoveHelper extends OperationHelper {
         telemetry.addData("BL Encoder", BLMotor.getCurrentPosition());
         telemetry.addData("FR Encoder", FRMotor.getCurrentPosition());
         telemetry.addData("FL Encoder", FLMotor.getCurrentPosition());
+
+
         LY = Range.clip(LY, -1, 1);
         LX = Range.clip(LX, -1, 1);
         RX = Range.clip(RX, -1, 1);
