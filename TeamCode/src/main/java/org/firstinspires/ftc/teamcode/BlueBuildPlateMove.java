@@ -193,8 +193,8 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 130;
                 break;
             case 130:
-                moveHelper.runMotorsToPosition(400, 400,400,400);
-                advanceToStateAfterTime(135, 1);
+                moveHelper.runMotorsToPosition(600, 600,600,600);
+                advanceToStateAfterTime(135, 2);
             case 135:
                 moveHelper.resetEncoders();
                 state = 140;

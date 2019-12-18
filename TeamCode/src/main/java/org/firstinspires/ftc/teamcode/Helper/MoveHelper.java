@@ -64,8 +64,8 @@ public class MoveHelper extends OperationHelper {
         // sets power to the motors
         FLMotor.setPower(fl);
         FRMotor.setPower(fr);
-        BLMotor.setPower(bl);
-        BRMotor.setPower(br);
+        BLMotor.setPower(bl*.9);
+        BRMotor.setPower(br*.9);
 
     }
 
@@ -204,6 +204,13 @@ public class MoveHelper extends OperationHelper {
             SetLowPower();
         } else if (gamepad1.y) {
             SetHighPower();
+        }
+
+        if (gamepad1.dpad_left) {
+            runUsingEncoders();
+        }
+        if (gamepad1.dpad_right) {
+            runWithoutEncoders();
         }
 
 

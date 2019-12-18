@@ -97,7 +97,7 @@ public class Parking extends OpMode {
                         telemetry.addData("Blue Ratio ", redToBlue);
                         telemetry.addData("Green Ratio  ", redToGreen);
 
-                        if (redToGreen > 2 && redToBlue > 2)
+                        if (redToGreen > 1.5 && redToBlue > 2)
                         {
                             state = 30;
                         }
@@ -109,7 +109,7 @@ public class Parking extends OpMode {
                         telemetry.addData("Red Ratio ", blueToRed);
                         telemetry.addData("Green Ratio  ", blueToGreen);
 
-                        if (blueToGreen > 1.3 && blueToRed > 1.5) {
+                        if (blueToGreen > 1.2 && blueToRed > 1.5) {
                             state = 30;
                         }
                     }

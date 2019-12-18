@@ -18,13 +18,13 @@ public class PickupArmHelper extends OperationHelper {
     public static double WRIST_HORIZONTAL_SERVO_MIN = 0;
     public static double WRIST_VERTICAL_SERVO_MAX = 1;
     public static double WRIST_VERTICAL_SERVO_MIN = 0;
-    public static double GRIP_SERVO_MAX = 0.4;
+    public static double GRIP_SERVO_MAX = 0.5;
     public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
     public static double WRIST_HORIZONTAL_SERVO_SPEED = .05;
     public static double WRIST_VERTICAL_SERVO_SPEED = .05;
     public static double EXTENSION_SPEED = .5;
-    public static double ELEVATION_SPEED = 1;
+    public static double ELEVATION_SPEED = 20;
     private static final int LOWER_LIMIT = -800; // maximum "height" for elevation arm
     private int desiredPosition = 0;
 
@@ -141,16 +141,8 @@ public class PickupArmHelper extends OperationHelper {
             return elevationMotor.getCurrentPosition();
     }
 
-//    public int desiredPosition() {
-//        return elevationMotor.getCurrentPosition();
-//    }
-
-//    public void setPower(double power) {
-//        elevationMotor.setPower(power);
-//    }
-
     public void raise(double raiseAmount){
-        desiredPosition += raiseAmount * 10;
+        desiredPosition += raiseAmount * ELEVATION_SPEED;
         if (desiredPosition < LOWER_LIMIT) {
             desiredPosition = LOWER_LIMIT;
         }

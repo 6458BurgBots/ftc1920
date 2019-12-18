@@ -93,7 +93,7 @@ public class RedBuildPlateMove extends OpMode{
                 break;
             case 40: //Strafe left
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(800,-800,800,-800);
+                moveHelper.runMotorsToPosition(600,-600,600,-600);
                 advanceToStateAfterTime(45,1);
                 break;
             case 45:
@@ -145,7 +145,7 @@ public class RedBuildPlateMove extends OpMode{
                 break;
             case 110:
                 buildPlateServoHelper.Close();
-                advanceToStateAfterTime(80,1);
+                advanceToStateAfterTime(120,1);
                 break;
             case 120:
                 moveHelper.encoderPowerLevel = .5;

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Helper.BlockArmServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
+import org.firstinspires.ftc.teamcode.Helper.GyroHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 import org.firstinspires.ftc.teamcode.Helper.PickupArmHelper;
 
@@ -24,6 +25,8 @@ public class TeleOpNew extends OpMode{
     PickupArmHelper pickupArmHelper;
     BuildPlateServoHelper buildPlateServoHelper;
     ColorSensor sensorColor;
+
+    GyroHelper gyroHelper;
 
     @Override
     public void init() {
@@ -42,7 +45,25 @@ public class TeleOpNew extends OpMode{
         pickupArmHelper = new PickupArmHelper(telemetry, hardwareMap);
         pickupArmHelper.init();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
+        gyroHelper = new GyroHelper(telemetry, hardwareMap);
+        gyroHelper.moveHelper = moveHelper;
+        gyroHelper.init();
 
+    }
+
+    public void init_loop() {
+        if (moveHelper == null){
+            moveHelper = new MoveHelper(telemetry, hardwareMap);
+        }
+        if (gamepad1.a){ // Left stick is cardinal moves, rotation on right
+            moveHelper.joystickJacob = true;
+            telemetry.addData("Joystick setup", " Jacob's Way");
+        }
+        if (gamepad1.y) { // Left stick is rotation, cardinal moves on right
+            moveHelper.joystickJacob = false;
+            telemetry.addData("Joystick setup", " Thomas' Way");
+        }
+        gyroHelper.init_loop();
     }
 
     @Override
@@ -71,10 +92,8 @@ public class TeleOpNew extends OpMode{
         blockArmServoHelper.Close();
         }
 
-        if(gamepad1.dpad_right){
-            pickupArmHelper.resetHold();
-        }
 //        telemetry.addData("BlockArmPosition", blockArmPosition);
+        /*
         telemetry.addData("ElevationArm", pickupArmHelper.getPosition());
         if (sensorColor != null) {
             telemetry.addData("red: ", sensorColor.red());
@@ -82,7 +101,9 @@ public class TeleOpNew extends OpMode{
             telemetry.addData("green: ", sensorColor.green());
         } else {
             telemetry.addData("Color sensor is disabled","");
-        }
+        }*/
+
+        gyroHelper.printHeadings();
         telemetry.update();
 
     }
