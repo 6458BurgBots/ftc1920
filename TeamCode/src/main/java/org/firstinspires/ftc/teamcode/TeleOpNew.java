@@ -1,3 +1,5 @@
+//TODO - NEED TO SWITCH OUT VERTICAL SERVO. REPLACEMENT IN MIDDLE OF BOT.
+
 package org.firstinspires.ftc.teamcode;
 
 import android.view.View;
@@ -26,7 +28,7 @@ public class TeleOpNew extends OpMode{
     BuildPlateServoHelper buildPlateServoHelper;
     ColorSensor sensorColor;
 
-    GyroHelper gyroHelper;
+   // GyroHelper gyroHelper;
 
     @Override
     public void init() {
@@ -45,9 +47,9 @@ public class TeleOpNew extends OpMode{
         pickupArmHelper = new PickupArmHelper(telemetry, hardwareMap);
         pickupArmHelper.init();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
-        gyroHelper = new GyroHelper(telemetry, hardwareMap);
-        gyroHelper.moveHelper = moveHelper;
-        gyroHelper.init();
+     //   gyroHelper = new GyroHelper(telemetry, hardwareMap);
+       // gyroHelper.moveHelper = moveHelper;
+        //gyroHelper.init();
 
     }
 
@@ -63,7 +65,7 @@ public class TeleOpNew extends OpMode{
             moveHelper.joystickJacob = false;
             telemetry.addData("Joystick setup", " Thomas' Way");
         }
-        gyroHelper.init_loop();
+        //gyroHelper.init_loop();
     }
 
     @Override
@@ -103,8 +105,8 @@ public class TeleOpNew extends OpMode{
             telemetry.addData("Color sensor is disabled","");
         }*/
 
-        gyroHelper.printHeadings();
-        telemetry.update();
+       // gyroHelper.printHeadings();
+      //  telemetry.update();
 
     }
 }

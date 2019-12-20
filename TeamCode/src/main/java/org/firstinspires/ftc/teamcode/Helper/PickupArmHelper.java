@@ -43,14 +43,16 @@ public class PickupArmHelper extends OperationHelper {
         }
         if (hardwareMap.servo.contains("wristhorizontalservo")) {
             wristHorizontalServo = hardwareMap.servo.get("wristhorizontalservo");
-            if (wristHorizontalServo != null) {
-                // wristHorizontalServo.setPosition(BLOCK_ARM_SERVO_OPEN);
+            wristHorizontalServo.setPosition(WRIST_HORIZONTAL_SERVO_MIN);
+           if (wristHorizontalServo != null) {
+                wristHorizontalServo.setPosition(WRIST_HORIZONTAL_SERVO_MIN);
             }
         }
         if (hardwareMap.servo.contains("wristverticalservo")) {
             wristVerticalServo = hardwareMap.servo.get("wristverticalservo");
+            wristVerticalServo.setPosition(WRIST_VERTICAL_SERVO_MIN);
             if (wristVerticalServo != null) {
-                // wristVerticalServo.setPosition(BLOCK_ARM_SERVO_OPEN);
+                wristVerticalServo.setPosition(WRIST_VERTICAL_SERVO_MIN);
             }
         }
         if (hardwareMap.dcMotor.contains("elevationmotor")) {

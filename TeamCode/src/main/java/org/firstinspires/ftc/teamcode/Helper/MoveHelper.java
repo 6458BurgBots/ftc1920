@@ -64,8 +64,8 @@ public class MoveHelper extends OperationHelper {
         // sets power to the motors
         FLMotor.setPower(fl);
         FRMotor.setPower(fr);
-        BLMotor.setPower(bl*.9);
-        BRMotor.setPower(br*.9);
+        BLMotor.setPower(bl*.85);
+        BRMotor.setPower(br*.85);
 
     }
 

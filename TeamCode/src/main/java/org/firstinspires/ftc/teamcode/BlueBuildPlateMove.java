@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
+import org.firstinspires.ftc.teamcode.Helper.PickupArmHelper;
 
 @Autonomous(name="BlueBuildPlateMove", group="Autonomous")
 public class BlueBuildPlateMove extends OpMode{
@@ -61,6 +62,7 @@ public class BlueBuildPlateMove extends OpMode{
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
         buildPlateServoHelper.Close();
+
     }
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
     // parameters include the newState, which refers to the new value being assigned to state at end of duration
