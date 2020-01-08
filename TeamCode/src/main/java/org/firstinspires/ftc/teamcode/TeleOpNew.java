@@ -1,4 +1,4 @@
-//TODO - NEED TO SWITCH OUT VERTICAL SERVO. REPLACEMENT IN MIDDLE OF BOT.
+//TODO - NEED TO SWITCH OUT VERTICAL SERVO.
 
 package org.firstinspires.ftc.teamcode;
 
@@ -28,7 +28,7 @@ public class TeleOpNew extends OpMode{
     BuildPlateServoHelper buildPlateServoHelper;
     ColorSensor sensorColor;
 
-   // GyroHelper gyroHelper;
+    //GyroHelper gyroHelper;
 
     @Override
     public void init() {
@@ -47,8 +47,8 @@ public class TeleOpNew extends OpMode{
         pickupArmHelper = new PickupArmHelper(telemetry, hardwareMap);
         pickupArmHelper.init();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
-     //   gyroHelper = new GyroHelper(telemetry, hardwareMap);
-       // gyroHelper.moveHelper = moveHelper;
+        //gyroHelper = new GyroHelper(telemetry, hardwareMap);
+        //gyroHelper.moveHelper = moveHelper;
         //gyroHelper.init();
 
     }
@@ -95,17 +95,17 @@ public class TeleOpNew extends OpMode{
         }
 
 //        telemetry.addData("BlockArmPosition", blockArmPosition);
-        /*
-        telemetry.addData("ElevationArm", pickupArmHelper.getPosition());
-        if (sensorColor != null) {
+
+        //telemetry.addData("ElevationArm", pickupArmHelper.getPosition());
+       /* if (sensorColor != null) {
             telemetry.addData("red: ", sensorColor.red());
             telemetry.addData("blue: ", sensorColor.blue());
             telemetry.addData("green: ", sensorColor.green());
         } else {
             telemetry.addData("Color sensor is disabled","");
-        }*/
-
-       // gyroHelper.printHeadings();
+        }
+*/
+        //gyroHelper.printHeadings();
       //  telemetry.update();
 
     }

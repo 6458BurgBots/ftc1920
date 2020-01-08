@@ -150,7 +150,7 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 80: //Turn with building plate.
                 moveHelper.encoderPowerLevel = .5;
-                moveHelper.runMotorsToPosition(650,650,650,650);
+                moveHelper.runMotorsToPosition(750,750,750,750);
                 advanceToStateAfterTime(85, 2);
                 break;
             case 85:
@@ -183,7 +183,7 @@ public class BlueBuildPlateMove extends OpMode{
                 break; */
             case 120://Strafe left/Right to get in line with end position.
                 if (isInside){
-                    moveHelper.runMotorsToPosition(1000,-1000,1000,-1000);
+                    moveHelper.runMotorsToPosition(900,-900,900,-900);
                 }
                 else {
                     moveHelper.runMotorsToPosition(-1000, 1000, -1000, 1000);

@@ -17,7 +17,7 @@ public class PickupArmHelper extends OperationHelper {
     public static double WRIST_HORIZONTAL_SERVO_MAX = 1;
     public static double WRIST_HORIZONTAL_SERVO_MIN = 0;
     public static double WRIST_VERTICAL_SERVO_MAX = 1;
-    public static double WRIST_VERTICAL_SERVO_MIN = 0;
+    public static double WRIST_VERTICAL_SERVO_MIN = .5;
     public static double GRIP_SERVO_MAX = 0.5;
     public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
@@ -119,7 +119,6 @@ public class PickupArmHelper extends OperationHelper {
             wristVerticalServo.setPosition(current);
             telemetry.addData("Right stick y", gamepad2.right_stick_y);
             telemetry.addData("Wrist vertical position", wristVerticalServo.getPosition());
-
         }
         //double LY = Range.clip(gamepad2.left_stick_y, -1, 1);
         //elevationMotor.setPower(LY * ELEVATION_SPEED);
