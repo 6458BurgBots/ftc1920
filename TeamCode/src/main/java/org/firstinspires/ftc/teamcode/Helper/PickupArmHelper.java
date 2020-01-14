@@ -11,7 +11,7 @@ import java.awt.font.NumericShaper;
 public class PickupArmHelper extends OperationHelper {
     private DcMotor elevationMotor;
     private DcMotor extensionMotor;
-    protected Servo gripServo;  // Continuous rotation
+    protected Servo gripServo;
     protected Servo wristHorizontalServo;
     protected Servo wristVerticalServo;
     public static double WRIST_HORIZONTAL_SERVO_MAX = 1;

@@ -1,5 +1,3 @@
-//TODO - NEED TO SWITCH OUT VERTICAL SERVO.
-
 package org.firstinspires.ftc.teamcode;
 
 import android.view.View;
@@ -27,6 +25,7 @@ public class TeleOpNew extends OpMode{
     PickupArmHelper pickupArmHelper;
     BuildPlateServoHelper buildPlateServoHelper;
     ColorSensor sensorColor;
+    ColorSensor blockColor;
 
     //GyroHelper gyroHelper;
 
@@ -35,18 +34,20 @@ public class TeleOpNew extends OpMode{
 
         moveHelper = new MoveHelper(telemetry, hardwareMap);
         moveHelper.init();
-        blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
-        blockArmServoHelper.init();
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
+        blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
+        blockArmServoHelper.init();
+        pickupArmHelper = new PickupArmHelper(telemetry, hardwareMap);
+        pickupArmHelper.init();
         buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
         buildPlateServoHelper.init();
         LeftFeedMotor = hardwareMap.dcMotor.get("leftfeed");
         RightFeedMotor = hardwareMap.dcMotor.get("rightfeed");
         LeftFeedMotor.setDirection(DcMotor.Direction.REVERSE);
-        pickupArmHelper = new PickupArmHelper(telemetry, hardwareMap);
-        pickupArmHelper.init();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
+        blockColor = hardwareMap.get(ColorSensor.class,"blockdetector");
+
         //gyroHelper = new GyroHelper(telemetry, hardwareMap);
         //gyroHelper.moveHelper = moveHelper;
         //gyroHelper.init();
@@ -97,16 +98,25 @@ public class TeleOpNew extends OpMode{
 //        telemetry.addData("BlockArmPosition", blockArmPosition);
 
         //telemetry.addData("ElevationArm", pickupArmHelper.getPosition());
-       /* if (sensorColor != null) {
-            telemetry.addData("red: ", sensorColor.red());
-            telemetry.addData("blue: ", sensorColor.blue());
-            telemetry.addData("green: ", sensorColor.green());
-        } else {
-            telemetry.addData("Color sensor is disabled","");
-        }
-*/
-        //gyroHelper.printHeadings();
-      //  telemetry.update();
+
+//        if (sensorColor != null) {
+//            telemetry.addData("red: ", sensorColor.red());
+//            telemetry.addData("blue: ", sensorColor.blue());
+//            telemetry.addData("green: ", sensorColor.green());
+//        } else {
+//            telemetry.addData("Color sensor is disabled","");
+//        }
+
+//        if (blockColor != null) {
+//            telemetry.addData("red: ", blockColor.red());
+//            telemetry.addData("blue: ", blockColor.blue());
+//            telemetry.addData("green: ", blockColor.green());
+//        } else {
+//            telemetry.addData("Block sensor is disabled","");
+//        }
+
+//        gyroHelper.printHeadings();
+        telemetry.update();
 
     }
 }
