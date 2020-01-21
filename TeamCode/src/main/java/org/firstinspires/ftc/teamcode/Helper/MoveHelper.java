@@ -23,6 +23,7 @@ public class MoveHelper extends OperationHelper {
     private boolean isPositionValid;
     public double encoderPowerLevel = 1;
     public boolean joystickJacob = true;
+    public boolean displayMoveOutputs = true;
 
     public MoveHelper(Telemetry t, HardwareMap h)
     {
@@ -215,14 +216,15 @@ public class MoveHelper extends OperationHelper {
 
 
         //Establishes floating variables linked to the gamepads
-        telemetry.addData("Left X", LX);
-        telemetry.addData("Left Y", LY);
-        telemetry.addData("Right X", RX);
-        telemetry.addData("BR Encoder", BRMotor.getCurrentPosition());
-        telemetry.addData("BL Encoder", BLMotor.getCurrentPosition());
-        telemetry.addData("FR Encoder", FRMotor.getCurrentPosition());
-        telemetry.addData("FL Encoder", FLMotor.getCurrentPosition());
-
+        if (displayMoveOutputs) {
+            telemetry.addData("Left X", LX);
+            telemetry.addData("Left Y", LY);
+            telemetry.addData("Right X", RX);
+            telemetry.addData("BR Encoder", BRMotor.getCurrentPosition());
+            telemetry.addData("BL Encoder", BLMotor.getCurrentPosition());
+            telemetry.addData("FR Encoder", FRMotor.getCurrentPosition());
+            telemetry.addData("FL Encoder", FLMotor.getCurrentPosition());
+        }
 
         LY = Range.clip(LY, -1, 1);
         LX = Range.clip(LX, -1, 1);
