@@ -1,20 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.view.View;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Helper.BlockArmServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
-import org.firstinspires.ftc.teamcode.Helper.GyroHelper;
 import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
+import org.firstinspires.ftc.teamcode.Helper.ClawHelper;
 import org.firstinspires.ftc.teamcode.Helper.PickupArmHelper;
-import org.firstinspires.ftc.teamcode.Helper.PickupArmHelper2;
 
 @TeleOp(name="TeleOpNew", group="TeleOp")
 public class TeleOpNew extends OpMode{
@@ -23,8 +19,7 @@ public class TeleOpNew extends OpMode{
     BlockArmServoHelper blockArmServoHelper;
     private DcMotor LeftFeedMotor;
     private DcMotor RightFeedMotor;
-    double blockArmPosition = 0;
-    PickupArmHelper2 pickupArmHelper;
+    ClawHelper pickupArmHelper;
     BuildPlateServoHelper buildPlateServoHelper;
     ColorSensor sensorColor;
     ColorSensor blockColor;
@@ -40,7 +35,7 @@ public class TeleOpNew extends OpMode{
         moveHelper.displayMoveOutputs = false;
         blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
         blockArmServoHelper.init();
-        pickupArmHelper = new PickupArmHelper2(telemetry, hardwareMap);
+        pickupArmHelper = new ClawHelper(telemetry, hardwareMap);
         pickupArmHelper.init();
         buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
         buildPlateServoHelper.init();
@@ -71,10 +66,10 @@ public class TeleOpNew extends OpMode{
 
     @Override
     public void loop() {
-        //moveHelper.checkTeleOp(gamepad1,gamepad2);
+        moveHelper.checkTeleOp(gamepad1,gamepad2);
         buildPlateServoHelper.checkTeleOp(gamepad1, gamepad2);
         pickupArmHelper.checkTeleOp(gamepad1, gamepad2);
-        imuHelper.checkTeleOp(gamepad1, gamepad2);
+        //imuHelper.checkTeleOp(gamepad1, gamepad2);
         double LY = gamepad1.left_trigger/4 -gamepad1.right_trigger/4;
 
         LeftFeedMotor.setPower(LY);
@@ -126,7 +121,7 @@ public class TeleOpNew extends OpMode{
             telemetry.addData("Block sensor is disabled","");
        }
  */
-        imuHelper.printHeadings();
+        //imuHelper.printHeadings();
         telemetry.update();
     }
     private boolean isSkyStone(int red, int green, int blue){

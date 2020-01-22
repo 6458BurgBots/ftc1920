@@ -9,24 +9,24 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // This is the version that works with the squeeze arm
-public class PickupArmHelper2 extends OperationHelper {
+public class ClawHelper extends OperationHelper {
     private DcMotor elevationMotor;
     private DcMotor extensionMotor;
     protected Servo gripServo;
     protected Servo wristVerticalServo;
-    public static double WRIST_VERTICAL_SERVO_MAX = 1;
-    public static double WRIST_VERTICAL_SERVO_MIN = .5;
+    public static double WRIST_VERTICAL_SERVO_MAX = 0.8;
+    public static double WRIST_VERTICAL_SERVO_MIN = 0.23;
+    public static double WRIST_VERTICAL_SERVO_SPEED = .03;
     public static double GRIP_SERVO_MAX = 0.5;
     public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
-    public static double WRIST_VERTICAL_SERVO_SPEED = .05;
     public static double EXTENSION_SPEED = .5;
     public static double ELEVATION_SPEED = 20;
     private static final int LOWER_LIMIT = -800; // maximum "height" for elevation arm
     private int desiredPosition = 0;
 
 
-    public PickupArmHelper2(Telemetry t, HardwareMap h)
+    public ClawHelper(Telemetry t, HardwareMap h)
     {
         super(t, h);
     }
@@ -92,7 +92,7 @@ public class PickupArmHelper2 extends OperationHelper {
         }
         if (gamepad2.right_stick_y != 0){
             double current = wristVerticalServo.getPosition();
-            current += WRIST_VERTICAL_SERVO_SPEED * gamepad2.right_stick_y;
+            current -= WRIST_VERTICAL_SERVO_SPEED * gamepad2.right_stick_y;
             current = Range.clip(current, WRIST_VERTICAL_SERVO_MIN, WRIST_VERTICAL_SERVO_MAX );
             wristVerticalServo.setPosition(current);
             telemetry.addData("Right stick y", gamepad2.right_stick_y);

@@ -20,6 +20,7 @@ import static java.lang.Math.round;
 
 public class IMUHelper extends OperationHelper {
 
+    private static double ANGLE_TOLERANCE = 5;
     BNO055IMU imu;
     private boolean initializationStarted=false;
     private boolean angleReset = false;
@@ -62,8 +63,8 @@ public class IMUHelper extends OperationHelper {
 
     public void printHeadings() {
         telemetry.addData("Heading 1", lastAngles.firstAngle);
-        telemetry.addData("Heading 2", lastAngles.secondAngle);
-        telemetry.addData("Heading 3", lastAngles.thirdAngle);
+        //telemetry.addData("Heading 2", lastAngles.secondAngle);
+        //telemetry.addData("Heading 3", lastAngles.thirdAngle);
         telemetry.addData("global heading", globalAngle);
     }
     /**
@@ -124,15 +125,21 @@ public class IMUHelper extends OperationHelper {
     }
 
     public void turnTo(int desired) {
-        double TURN_RIGHT_SPEED = -.5;
-        double TURN_LEFT_SPEED = .5;
+        double TURN_RIGHT_SPEED = -.3;
+        double TURN_LEFT_SPEED = .3;
+
+        getAngle();
 
         double direction = desired - globalAngle;
         double magnitude = abs(direction);
 
         telemetry.addData("Direction", direction);
         telemetry.addData("Desired", desired);
+        printHeadings();
 
+        if (magnitude < ANGLE_TOLERANCE) {
+            telemetry.addData("Turn", "right");
+        }
         if (direction >= 0 && magnitude <= 180) {
             moveHelper.rturn(TURN_RIGHT_SPEED);
             telemetry.addData("Turn", "right");

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Helper.BlockArmServoHelper;
+import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
 @Autonomous(name="DepotSamplingBlue", group="Autonomous")
@@ -21,6 +22,7 @@ public class DepotSamplingBlue extends OpMode {
     ColorSensor sensorColor;
     ColorSensor blockColor;
     BlockArmServoHelper blockArmServoHelper;
+    IMUHelper imuHelper;
     double lastTime;
     //protected Servo plateArmServo;
     public int long_move = -6250;
@@ -38,6 +40,14 @@ public class DepotSamplingBlue extends OpMode {
         blockColor = hardwareMap.get(ColorSensor.class,"blockdetector");
         blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
         blockArmServoHelper.init();
+        imuHelper = new IMUHelper(telemetry, hardwareMap);
+        imuHelper.moveHelper = moveHelper;
+        imuHelper.init();
+    }
+
+    @Override
+    public void init_loop() {
+        imuHelper.init_loop();
     }
 
     private void advanceToStateAfterTime(int newState, double duration) {
@@ -60,106 +70,121 @@ public class DepotSamplingBlue extends OpMode {
 
             case 20:        //backwards move to line of blocks
                 moveHelper.runMotorsToPosition(900,900,900,900);
-                advanceToStateAfterTime(25, 1.5);
+                advanceToStateAfterTime(30, 1.5);
                 break;
-            case 25:
-                moveHelper.resetEncoders();
-                state = 30;
-                break;
-
-            case 30:        //left turn to line up for color sensing
-                moveHelper.runMotorsToPosition(750,-750,-750,750);
-                advanceToStateAfterTime(35,1);
-                break;
-
-            case 35:
+            case 30:
                 moveHelper.resetEncoders();
                 state = 40;
                 break;
 
-            case 40:        //move back to the wall
-                moveHelper.encoderPowerLevel = .3;
+            case 40:        //left turn to line up for color sensing
+                moveHelper.runMotorsToPosition(750,-750,-750,750);
+                advanceToStateAfterTime(50,1);
+                break;
+            case 50:
+                moveHelper.resetEncoders();
+                state = 60;
+                break;
+
+                // Adjust angle so that we can move straight to the wall
+            case 60:
+                imuHelper.turnTo(-90);
+                advanceToStateAfterTime(100, 1);
+                break;
+
+            case 100:        //move back to the wall
+                moveHelper.encoderPowerLevel = .2;
                 moveHelper.runMotorsToPosition(600,-600,600,-600);
                 if (isCloseToBlock(blockColor)){
-                    state = 45;
+                    state = 200;
                 }
                 advanceToStateAfterTime(997,3); //failsafe
                 break;
-            case 45:
-                moveHelper.resetEncoders();
-                state = 50;
+            case 200:
+                moveHelper.runWithoutEncoders();
+                state = 205;
                 break;
 
-            case 50:        //light logic and move to sense
-                moveHelper.runMotorsToPosition(-1200,-1200,-1200,-1200);
+            // Adjust angle so that we can move straight to the wall
+            case 205:
+                imuHelper.turnTo(-90);
+                advanceToStateAfterTime(207, 1);
+                break;
+
+            case 207:
+                moveHelper.resetEncoders();
+                moveHelper.runUsingEncoders();
+                state = 210;
+                break;
+
+
+            case 210:        //light logic and move to sense
+                moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
                 if(isSkyStone(blockColor)){
-                    state = 65;
+                    state = 220;
                 }
-                else
                 advanceToStateAfterTime(998,4);
                 break;
-
-         /*   case 55:        // run motors the length of one block
-                moveHelper.runMotorsToPosition(-360,-360,-360,-360);
-                state = 50;
-                break;
-            case 60:        //move to line up
-                moveHelper.runMotorsToPosition(0,0,0,0);
-                advanceToStateAfterTime(65,2);
-                break; */
-
-            case 65:
+            case 220:
                 moveHelper.resetEncoders();
-                state = 70;
+                state = 230;
                 break;
 
-            case 70:        //lower block Arm
+            case 230:        //lower block Arm
                 blockArmServoHelper.Close();
-                advanceToStateAfterTime(80,1);
+                advanceToStateAfterTime(240,1);
                 break;
 
-            case 80:        //Strafe to separate from the line
-                moveHelper.runMotorsToPosition(-800,800,-800,800);
-                advanceToStateAfterTime(85,1.5);
+            case 240:        //Strafe to separate from the line
+                moveHelper.encoderPowerLevel = .7;
+                moveHelper.runMotorsToPosition(-1000,1000,-1000,1000);
+                advanceToStateAfterTime(250,3);
                 break;
-
-            case 85:
-                moveHelper.resetEncoders();
+            case 250:
+                moveHelper.runWithoutEncoders(); // Turn off encoders so the next move can be a manual turn
                 moveHelper.encoderPowerLevel = 1;
-                state = 90;
+                state = 255;
+                break;
+            case 255:
+                imuHelper.turnTo(-90);
+                advanceToStateAfterTime(257, 1.5);
                 break;
 
-            case 90:        //run to pass the bridge THIS IS A COPY/PASTE FROM BlueDepotSide
-                moveHelper.runMotorsToPosition(3000, 3000, 3000, 3000);
-                advanceToStateAfterTime(95,3);
-                break;
-
-            case 95:
+            case 257:
                 moveHelper.resetEncoders();
-                state = 105;
+                moveHelper.runUsingEncoders();
+                state = 260;
                 break;
-            case 105: //Block Arm up
+
+            case 260:        //run to pass the bridge THIS IS A COPY/PASTE FROM BlueDepotSide
+                moveHelper.runMotorsToPosition(2500, 2500, 2500, 2500);
+                advanceToStateAfterTime(270,3);
+                break;
+            case 270:
+                moveHelper.resetEncoders();
+                state = 280;
+                break;
+
+            case 280: //Block Arm up
                 blockArmServoHelper.Open();
-                advanceToStateAfterTime(110,2);
+                advanceToStateAfterTime(290,2);
                 break;
-            case 110:
-                break;
-            case 115:
+            case 290:
+                telemetry.addData("End Program", "");
                 break;
             case 997:
+                telemetry.addData("End: didn't sense stone line", "");
                 break;
             case 998:
-                break;
-            case 999:
+                telemetry.addData("End: never found skystone", "");
                 break;
         }
-
     }
+
     private boolean isSkyStone(ColorSensor blockColor){
         double redToBlue = blockColor.red() / blockColor.blue();
         double greenToBlue = blockColor.green() / blockColor.blue();
         if (isCloseToBlock(blockColor)) {
-
 
             if (redToBlue < 2 && greenToBlue < 3) {
                 return true;
@@ -169,6 +194,7 @@ public class DepotSamplingBlue extends OpMode {
         }
         return false;
     }
+
     private boolean isCloseToBlock(ColorSensor blockColor){
         double totalBlockSensorValues = blockColor.red() + blockColor.blue() + blockColor.green();
         if (totalBlockSensorValues < 1500){
@@ -176,5 +202,4 @@ public class DepotSamplingBlue extends OpMode {
         }
         return true;
     }
-
 }
