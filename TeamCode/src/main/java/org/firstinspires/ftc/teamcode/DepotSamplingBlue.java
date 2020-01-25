@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 @Autonomous(name="DepotSamplingBlue", group="Autonomous")
 public class DepotSamplingBlue extends OpMode {
 
-    public static double SAMPLE_SERVO_CLOSED = 1;
-    public static double SAMPLE_SERVO_OPEN = .5;
     MoveHelper moveHelper;
     DistanceSensor sensorRange;
     ColorSensor sensorColor;
@@ -24,16 +22,12 @@ public class DepotSamplingBlue extends OpMode {
     BlockArmServoHelper blockArmServoHelper;
     IMUHelper imuHelper;
     double lastTime;
-    //protected Servo plateArmServo;
-    public int long_move = -6250;
     int state = 0;
 
     @Override
     public void init() {
         moveHelper = new MoveHelper(telemetry, hardwareMap);
         moveHelper.init();
-        //sensorRange = hardwareMap.get(DistanceSensor.class, "range");
-        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) sensorRange;
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
@@ -86,8 +80,7 @@ public class DepotSamplingBlue extends OpMode {
                 state = 60;
                 break;
 
-                // Adjust angle so that we can move straight to the wall
-            case 60:
+            case 60: // Adjust angle so that we can move straight to the wall
                 imuHelper.turnTo(-90);
                 advanceToStateAfterTime(100, 1);
                 break;
@@ -96,6 +89,7 @@ public class DepotSamplingBlue extends OpMode {
                 moveHelper.encoderPowerLevel = .2;
                 moveHelper.runMotorsToPosition(600,-600,600,-600);
                 if (isCloseToBlock(blockColor)){
+                    lastTime = getRuntime();
                     state = 200;
                 }
                 advanceToStateAfterTime(997,3); //failsafe
@@ -105,8 +99,7 @@ public class DepotSamplingBlue extends OpMode {
                 state = 205;
                 break;
 
-            // Adjust angle so that we can move straight to the wall
-            case 205:
+            case 205: // Adjust angle so that we can move straight to the wall
                 imuHelper.turnTo(-90);
                 advanceToStateAfterTime(207, 1);
                 break;
@@ -117,10 +110,10 @@ public class DepotSamplingBlue extends OpMode {
                 state = 210;
                 break;
 
-
             case 210:        //light logic and move to sense
                 moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
                 if(isSkyStone(blockColor)){
+                    lastTime = getRuntime();
                     state = 220;
                 }
                 advanceToStateAfterTime(998,4);
@@ -137,7 +130,7 @@ public class DepotSamplingBlue extends OpMode {
 
             case 240:        //Strafe to separate from the line
                 moveHelper.encoderPowerLevel = .7;
-                moveHelper.runMotorsToPosition(-1000,1000,-1000,1000);
+                moveHelper.runMotorsToPosition(-600,600,-600,600);
                 advanceToStateAfterTime(250,3);
                 break;
             case 250:
@@ -145,8 +138,8 @@ public class DepotSamplingBlue extends OpMode {
                 moveHelper.encoderPowerLevel = 1;
                 state = 255;
                 break;
-            case 255:
-                imuHelper.turnTo(-90);
+            case 255: //Adjust angle so robot runs past the bridge
+                imuHelper.turnTo(-92);
                 advanceToStateAfterTime(257, 1.5);
                 break;
 
@@ -156,7 +149,8 @@ public class DepotSamplingBlue extends OpMode {
                 state = 260;
                 break;
 
-            case 260:        //run to pass the bridge THIS IS A COPY/PASTE FROM BlueDepotSide
+            case 260:        //run to pass the bridge
+                moveHelper.encoderPowerLevel = .4;
                 moveHelper.runMotorsToPosition(2500, 2500, 2500, 2500);
                 advanceToStateAfterTime(270,3);
                 break;
@@ -167,9 +161,31 @@ public class DepotSamplingBlue extends OpMode {
 
             case 280: //Block Arm up
                 blockArmServoHelper.Open();
-                advanceToStateAfterTime(290,2);
+                moveHelper.runUsingEncoders();
+                moveHelper.omniDrive(0,0,0);
+                advanceToStateAfterTime(300,.5);
                 break;
-            case 290:
+
+            case 300:
+                moveHelper.omniDrive(0,-.25,0);
+                if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0) {
+                    double blueToGreen = (double) sensorColor.blue() / sensorColor.green();
+                    double blueToRed = (double) sensorColor.blue() / sensorColor.red();
+                    telemetry.addData("Red Ratio ", blueToRed);
+                    telemetry.addData("Green Ratio  ", blueToGreen);
+
+                    if (blueToGreen > 1.2 && blueToRed > 1.5) {
+                        state = 310;
+                    }
+                }
+                advanceToStateAfterTime(310,3);
+                break;
+            case 310:
+                moveHelper.omniDrive(0,0,0);
+                state = 320;
+                break;
+
+            case 320:
                 telemetry.addData("End Program", "");
                 break;
             case 997:

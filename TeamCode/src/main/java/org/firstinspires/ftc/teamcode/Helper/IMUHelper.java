@@ -125,8 +125,8 @@ public class IMUHelper extends OperationHelper {
     }
 
     public void turnTo(int desired) {
-        double TURN_RIGHT_SPEED = -.3;
-        double TURN_LEFT_SPEED = .3;
+        double TURN_RIGHT_SPEED = -.25;
+        double TURN_LEFT_SPEED = .25;
 
         getAngle();
 

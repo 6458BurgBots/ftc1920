@@ -15,12 +15,12 @@ public class ClawHelper extends OperationHelper {
     protected Servo gripServo;
     protected Servo wristVerticalServo;
     public static double WRIST_VERTICAL_SERVO_MAX = 0.8;
-    public static double WRIST_VERTICAL_SERVO_MIN = 0.23;
+    public static double WRIST_VERTICAL_SERVO_MIN = 0.1;
     public static double WRIST_VERTICAL_SERVO_SPEED = .03;
     public static double GRIP_SERVO_MAX = 0.5;
     public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
-    public static double EXTENSION_SPEED = .5;
+    public static double EXTENSION_SPEED = 1.0;
     public static double ELEVATION_SPEED = 20;
     private static final int LOWER_LIMIT = -800; // maximum "height" for elevation arm
     private int desiredPosition = 0;

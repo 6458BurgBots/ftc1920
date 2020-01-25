@@ -163,6 +163,15 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 120;
                 break;
 
+
+            case 115:
+                //  moveHelper.resetEncoders();
+                moveHelper.runUsingEncoders();
+                state = 120;
+                break;
+
+
+
             /* case 120:
                 moveHelper.omniDrive(0,-.25,0);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0)

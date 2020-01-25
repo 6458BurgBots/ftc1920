@@ -70,7 +70,7 @@ public class TeleOpNew extends OpMode{
         buildPlateServoHelper.checkTeleOp(gamepad1, gamepad2);
         pickupArmHelper.checkTeleOp(gamepad1, gamepad2);
         //imuHelper.checkTeleOp(gamepad1, gamepad2);
-        double LY = gamepad1.left_trigger/4 -gamepad1.right_trigger/4;
+        double LY = gamepad1.left_trigger/2 -gamepad1.right_trigger/2;
 
         LeftFeedMotor.setPower(LY);
         RightFeedMotor.setPower(LY);
@@ -84,44 +84,11 @@ public class TeleOpNew extends OpMode{
         }
 
         if (gamepad1.b) {
-        blockArmServoHelper.Open();
-
+            blockArmServoHelper.Open();
         }
         if (gamepad1.x) {
-        blockArmServoHelper.Close();
+            blockArmServoHelper.Close();
         }
-/*
-        if (isSkyStone(blockColor.red(), blockColor.green(), blockColor.blue())){
-            telemetry.addData("SkyStone", "yes");
-        }else {
-            telemetry.addData("SkyStone", "no");
-        }
-
-        telemetry.addData("isCloseToBlock", isCloseToBlock(blockColor.red(), blockColor.green(), blockColor.blue()));
-*/
-
-
-//        telemetry.addData("BlockArmPosition", blockArmPosition);
-
-        //telemetry.addData("ElevationArm", pickupArmHelper.getPosition());
-
-//        if (sensorColor != null) {
-//            telemetry.addData("red: ", sensorColor.red());
-//            telemetry.addData("blue: ", sensorColor.blue());
-//            telemetry.addData("green: ", sensorColor.green());
-//        } else {
-//            telemetry.addData("Color sensor is disabled","");
-//        }
-/*
-        if (blockColor != null) {
-            telemetry.addData("red: ", blockColor.red());
-            telemetry.addData("blue: ", blockColor.blue());
-           telemetry.addData("green: ", blockColor.green());
-        } else {
-            telemetry.addData("Block sensor is disabled","");
-       }
- */
-        //imuHelper.printHeadings();
         telemetry.update();
     }
     private boolean isSkyStone(int red, int green, int blue){
