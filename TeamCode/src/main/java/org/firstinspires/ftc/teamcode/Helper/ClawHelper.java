@@ -17,7 +17,7 @@ public class ClawHelper extends OperationHelper {
     public static double WRIST_VERTICAL_SERVO_MAX = 0.8;
     public static double WRIST_VERTICAL_SERVO_MIN = 0.1;
     public static double WRIST_VERTICAL_SERVO_SPEED = .03;
-    public static double GRIP_SERVO_MAX = 0.5;
+    public static double GRIP_SERVO_MAX = 0.04;
     public static double GRIP_SERVO_MIN = 0.0;
     public static double GRIP_SERVO_SPEED = 1.0;
     public static double EXTENSION_SPEED = 1.0;

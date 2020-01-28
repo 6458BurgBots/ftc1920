@@ -60,6 +60,7 @@ public class DepotSamplingBlue extends OpMode {
             case 0:
                 lastTime = getRuntime();
                 state = 20;
+                blockArmServoHelper.Open();
                 break;
 
             case 20:        //backwards move to line of blocks

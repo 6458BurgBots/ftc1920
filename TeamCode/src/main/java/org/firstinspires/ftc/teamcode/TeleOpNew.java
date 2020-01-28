@@ -79,6 +79,7 @@ public class TeleOpNew extends OpMode{
             moveHelper.resetEncoders();
             moveHelper.runUsingEncoders();
         }
+
         if (gamepad1.right_stick_button){
             moveHelper.runWithoutEncoders();
         }

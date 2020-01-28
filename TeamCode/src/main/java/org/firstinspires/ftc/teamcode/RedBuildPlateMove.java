@@ -59,7 +59,7 @@ public class RedBuildPlateMove extends OpMode {
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
-        buildPlateServoHelper.Close();
+        buildPlateServoHelper.Open();
     }
 
     // Noticed that each case was similar, so created a procedure called advancedToStateAfterTime
@@ -120,7 +120,7 @@ public class RedBuildPlateMove extends OpMode {
                 state = 66;
                 break;
             case 66:
-                buildPlateServoHelper.Open();
+                buildPlateServoHelper.Close();
                 advanceToStateAfterTime(67, 1);
                 break;
             case 67: //first Turn with building plate.
@@ -152,7 +152,7 @@ public class RedBuildPlateMove extends OpMode {
                 state = 110;
                 break;
             case 110:
-                buildPlateServoHelper.Close();
+                buildPlateServoHelper.Open();
                 advanceToStateAfterTime(120, 1);
                 break;
             case 120:

@@ -92,6 +92,7 @@ public class BlueBuildPlateMove extends OpMode{
             case 0:
                 lastTime = getRuntime();
                 state = 40;
+                buildPlateServoHelper.Open();
                 break;
             case 40: //Strafe left
                 moveHelper.runMotorsToPosition(-600,600,-600,600);
@@ -121,7 +122,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 66;
                 break;
             case 66:
-                buildPlateServoHelper.Open();
+                buildPlateServoHelper.Close();
                 advanceToStateAfterTime(70,1);
                 break;
             case 70: //Move back towards wall with building plate.
@@ -145,7 +146,7 @@ public class BlueBuildPlateMove extends OpMode{
                 state = 79;
                 break;
             case 79:
-                buildPlateServoHelper.Close();
+                buildPlateServoHelper.Open();
                 advanceToStateAfterTime(80,1);
                 break;
             case 80: //Turn with building plate.

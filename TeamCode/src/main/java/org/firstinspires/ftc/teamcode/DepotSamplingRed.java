@@ -57,6 +57,7 @@ public class DepotSamplingRed extends OpMode {
             case 0:
                 lastTime = getRuntime();
                 state = 20;
+                blockArmServoHelper.Open();
                 break;
 
             case 20:        //backwards move to line of blocks
@@ -177,7 +178,7 @@ public class DepotSamplingRed extends OpMode {
                         state = 310;
                     }
                 }
-                advanceToStateAfterTime(310,2);
+                advanceToStateAfterTime(310,3);
                 break;
             case 310:
                 moveHelper.omniDrive(0,0,0);

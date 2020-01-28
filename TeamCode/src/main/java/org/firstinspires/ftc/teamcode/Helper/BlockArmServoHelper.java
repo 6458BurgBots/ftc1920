@@ -19,7 +19,7 @@ public class BlockArmServoHelper extends OperationHelper {
         if (hardwareMap.servo.contains("blockarm")) {
             blockArmServo = hardwareMap.servo.get("blockarm");
             if (blockArmServo != null) {
-                blockArmServo.setPosition(BLOCK_ARM_SERVO_OPEN);
+               // blockArmServo.setPosition(BLOCK_ARM_SERVO_OPEN);
             }
         }
 
