@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Helper.BlockArmServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
+import org.firstinspires.ftc.teamcode.Helper.CapArmServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 import org.firstinspires.ftc.teamcode.Helper.ClawHelper;
@@ -17,6 +18,7 @@ public class TeleOpNew extends OpMode{
 
     MoveHelper moveHelper;
     BlockArmServoHelper blockArmServoHelper;
+    CapArmServoHelper capArmServoHelper;
     private DcMotor LeftFeedMotor;
     private DcMotor RightFeedMotor;
     ClawHelper pickupArmHelper;
@@ -33,8 +35,11 @@ public class TeleOpNew extends OpMode{
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         moveHelper.displayMoveOutputs = false;
+
         blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
         blockArmServoHelper.init();
+        capArmServoHelper = new CapArmServoHelper(telemetry, hardwareMap);
+        capArmServoHelper.init();
         pickupArmHelper = new ClawHelper(telemetry, hardwareMap);
         pickupArmHelper.init();
         buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
@@ -89,6 +94,12 @@ public class TeleOpNew extends OpMode{
         }
         if (gamepad1.x) {
             blockArmServoHelper.Close();
+        }
+        if (gamepad2.b) {
+            capArmServoHelper.Open();
+        }
+        if (gamepad2.x) {
+            capArmServoHelper.Close();
         }
         telemetry.update();
     }
