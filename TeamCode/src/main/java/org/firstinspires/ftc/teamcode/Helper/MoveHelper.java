@@ -25,6 +25,7 @@ public class MoveHelper extends OperationHelper {
     public boolean joystickJacob = true;
     public boolean displayMoveOutputs = true;
 
+
     public MoveHelper(Telemetry t, HardwareMap h)
     {
         super(t, h);
@@ -59,6 +60,13 @@ public class MoveHelper extends OperationHelper {
         double bl = ly + lx - rx;
         double br = ly - lx + rx;
 
+        double max = Math.max(Math.max(fl, fr), Math.max(bl, br));
+        if (max > 1) {
+            fl = fl / max;
+            fr = fr / max;
+            bl = bl / max;
+            br = br / max;
+        }
 
         String output = String.format("%1$.3f,%1$.3f,%1$.3f,%1$.3f",fl,fr,bl,br);
         telemetry.addData("Driving (fl,fr,bl,br): ", output);

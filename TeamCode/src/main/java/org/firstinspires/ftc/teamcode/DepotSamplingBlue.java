@@ -25,7 +25,7 @@ public class DepotSamplingBlue extends OpMode {
     int state = 0;
     int firstBlockDistance;
     private static int BRIDGE_TRAVEL_DISTANCE = 1950;
-    private static int SKYSTONE_DISTANCE = 1100;
+    private static int SKYSTONE_DISTANCE = 1310;
     private int returndist = firstBlockDistance - BRIDGE_TRAVEL_DISTANCE - SKYSTONE_DISTANCE;
     private static double SLOW_SPEED = .2;
     private static double NORMAL_SPEED = .7;
