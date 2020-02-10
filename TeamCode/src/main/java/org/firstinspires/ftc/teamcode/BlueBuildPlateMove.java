@@ -123,6 +123,38 @@ public class BlueBuildPlateMove extends OpMode{
                 break;
             case 66:
                 buildPlateServoHelper.Close();
+                advanceToStateAfterTime(67, 1);
+                break;
+            case 67: //first Turn with building plate.
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(200, -200, -200, 200);
+                advanceToStateAfterTime(68, 1);
+                break;
+            case 68:
+                moveHelper.resetEncoders();
+                state = 70;
+                break;
+            case 70: //Move back towards wall with building plate.
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(-1130, -1130, -1130, -1130);
+                advanceToStateAfterTime(74, 2.5);
+                break;
+            case 74:
+                moveHelper.resetEncoders();
+                state = 78;
+                break;
+            case 78: //second Turn with building plate.
+                moveHelper.encoderPowerLevel = .5;
+                moveHelper.runMotorsToPosition(1000, -1000, -1000, 1000);
+                advanceToStateAfterTime(79, 2);
+                break;
+         /*   case 65:
+                moveHelper.resetEncoders();
+                moveHelper.encoderPowerLevel = 1;
+                state = 66;
+                break;
+            case 66:
+                buildPlateServoHelper.Close();
                 advanceToStateAfterTime(70,1);
                 break;
             case 70: //Move back towards wall with building plate.
@@ -144,7 +176,7 @@ public class BlueBuildPlateMove extends OpMode{
                 moveHelper.encoderPowerLevel = 1;
                 moveHelper.resetEncoders();
                 state = 79;
-                break;
+                break; */
             case 79:
                 buildPlateServoHelper.Open();
                 advanceToStateAfterTime(80,1);
@@ -207,6 +239,7 @@ public class BlueBuildPlateMove extends OpMode{
             case 130:
                 moveHelper.runMotorsToPosition(600, 600,600,600);
                 advanceToStateAfterTime(135, 2);
+                break;
             case 135:
                 moveHelper.resetEncoders();
                 state = 140;

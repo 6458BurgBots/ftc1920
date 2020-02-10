@@ -141,7 +141,7 @@ public class RedBuildPlateMove extends OpMode {
                 moveHelper.resetEncoders();
                 state = 90;
                 break;
-            case 90: //first Turn with building plate.
+            case 90: //second Turn with building plate.
                 moveHelper.encoderPowerLevel = .5;
                 moveHelper.runMotorsToPosition(-1000, 1000, 1000, -1000);
                 advanceToStateAfterTime(100, 1);
