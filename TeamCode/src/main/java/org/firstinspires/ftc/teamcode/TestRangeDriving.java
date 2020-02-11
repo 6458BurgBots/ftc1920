@@ -16,7 +16,8 @@ public class TestRangeDriving extends OpMode {
     private DistanceSensor sensorRange;
     int count = 0;
     double target = 24;
-    double scale = 24; //98
+    double scale = 6; //98
+    double angleScale = -1;
 
     @Override
     public void init() {
@@ -30,20 +31,28 @@ public class TestRangeDriving extends OpMode {
         imuHelper.init();
     }
 
+    public void init_loop() {
+        imuHelper.init_loop();
+    }
+
     @Override
     public void loop() {
         double seconds = getRuntime();
         count = count + 1;
         double samplingRate = count / seconds;
-        double heading = (getTrueDistance() - target)/scale;
-        moveHelper.omniDrive(0, -.5, heading);
+        double heading = ((getTrueDistance() - target)/scale);
+        double currentAngle = imuHelper.getAngleInRadians();
+        if (currentAngle > .087 || currentAngle < -.087) {
+            heading = 0;
+        }
+        moveHelper.omniDrive( heading,-.4,currentAngle*angleScale);
 
 
 
         telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
         telemetry.addData("trueDistance", String.format("%.01f in", getTrueDistance()));
+        telemetry.addData("currentAngle", currentAngle);
         telemetry.addData("samplingRate", samplingRate);
-        telemetry.addData("heading", heading);
         telemetry.update();
     }
 
@@ -52,5 +61,5 @@ public class TestRangeDriving extends OpMode {
         double gyroAngle = imuHelper.getAngleInRadians();
         return distance * Math.cos(gyroAngle);
     }
-    
+
 }

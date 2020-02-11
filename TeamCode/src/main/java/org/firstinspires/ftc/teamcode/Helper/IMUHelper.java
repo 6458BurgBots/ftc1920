@@ -59,6 +59,7 @@ public class IMUHelper extends OperationHelper {
             imu.initialize(parameters);
         }
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+        telemetry.update();
     }
 
     public void printHeadings() {
