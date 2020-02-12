@@ -1,19 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Helper.BlockArmServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
-@Autonomous(name="DepotSamplingBlue", group="Autonomous")
-public class DepotSamplingBlue extends OpMode {
+@Autonomous(name="RangedAutoRed", group="Autonomous")
+public class RangedAutoRed extends OpMode {
 
     MoveHelper moveHelper;
     DistanceSensor sensorRange;
@@ -25,8 +23,8 @@ public class DepotSamplingBlue extends OpMode {
     int state = 0;
     int firstBlockDistance;
     int secondBlockDistance;
-    private static int BRIDGE_TRAVEL_DISTANCE = 1950;
-    private static int SKYSTONE_DISTANCE = 1300;
+    private static int BRIDGE_TRAVEL_DISTANCE = -1950;
+    private static int SKYSTONE_DISTANCE = -1300;
     private int returndist;
     private static double SLOW_SPEED = .2;
     private static double NORMAL_SPEED = .7;
@@ -120,7 +118,7 @@ public class DepotSamplingBlue extends OpMode {
                 break;
 
             case 210:        //light logic and move to sense
-                moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
+                moveHelper.runMotorsToPosition(1600,1600,1600,1600);
                 if(isSkyStone(blockColor)){
                     firstBlockDistance = moveHelper.getEncoderValue(); // a negative value
                     lastTime = getRuntime();
@@ -150,14 +148,14 @@ public class DepotSamplingBlue extends OpMode {
                 state = 260;
                 break;
             case 260:        //run to pass the bridge for the first time
-                int dist = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance; // subtracting a negative - ie add
+                int dist = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance; // subtracting a positive on red side - ie bigger negative
                 // At first, go fast.  Then go more slowly at the other side
-                if (moveHelper.GetBLMotorPosition() < dist/2){
-                    moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.8);
+                if (moveHelper.GetBLMotorPosition() > dist/2){
+                    moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.8);
                 } else {
-                    moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.4);
+                    moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.4);
                 }
-                if (moveHelper.GetBLMotorPosition() > dist){
+                if (moveHelper.GetBLMotorPosition() < dist){
                     lastTime = getRuntime();
                     state = 280;
                 }
@@ -171,8 +169,8 @@ public class DepotSamplingBlue extends OpMode {
                 advanceToStateAfterTime(300,1);
                 break;
             case 300: // move back to other side
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.4);
-                if (moveHelper.GetBLMotorPosition() < returndist){
+                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.4);
+                if (moveHelper.GetBLMotorPosition() > returndist){
                     lastTime = getRuntime();
                     state = 305;
                 }
@@ -199,7 +197,7 @@ public class DepotSamplingBlue extends OpMode {
                 state = 315;
                 break;
             case 315:        //light logic and move to sense
-                moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
+                moveHelper.runMotorsToPosition(1600,1600,1600,1600);
                 if(isSkyStone(blockColor)){
                     secondBlockDistance = moveHelper.getEncoderValue();
                     returndist += secondBlockDistance;
@@ -233,8 +231,8 @@ public class DepotSamplingBlue extends OpMode {
                 break;
             case 340:        //run to pass the bridge
                 int moveDistance = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance - secondBlockDistance + SKYSTONE_DISTANCE;
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.6);
-                if (moveHelper.GetBLMotorPosition() > -returndist){
+                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.6);
+                if (moveHelper.GetBLMotorPosition() < -returndist){
                     lastTime = getRuntime();
                     state = 345;
                 }
@@ -254,7 +252,7 @@ public class DepotSamplingBlue extends OpMode {
                 moveHelper.rangedTarget = 26;
                 break;
             case 350: //Move to park on blue line.
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.3);
+                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.3);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0) {
                     double blueToGreen = (double) sensorColor.blue() / sensorColor.green();
                     double blueToRed = (double) sensorColor.blue() / sensorColor.red();

@@ -29,6 +29,7 @@ public class TestRangeDriving extends OpMode {
         sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         imuHelper = new IMUHelper(telemetry, hardwareMap);
         imuHelper.init();
+        moveHelper.runWithoutEncoders();
     }
 
     public void init_loop() {
@@ -37,22 +38,23 @@ public class TestRangeDriving extends OpMode {
 
     @Override
     public void loop() {
-        double seconds = getRuntime();
+        double currentAngle = imuHelper.getAngleInRadians();
+
+       /* double seconds = getRuntime();
         count = count + 1;
         double samplingRate = count / seconds;
-        double heading = ((getTrueDistance() - target)/scale);
-        double currentAngle = imuHelper.getAngleInRadians();
+        double heading = ((getTrueDistance() - rangedTarget)/scale);
         if (currentAngle > .087 || currentAngle < -.087) {
             heading = 0;
         }
         moveHelper.omniDrive( heading,-.4,currentAngle*angleScale);
-
+*/
+        moveHelper.driveBySensor(imuHelper.getAngleInRadians(),sensorRange.getDistance(DistanceUnit.INCH),0);
 
 
         telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
         telemetry.addData("trueDistance", String.format("%.01f in", getTrueDistance()));
         telemetry.addData("currentAngle", currentAngle);
-        telemetry.addData("samplingRate", samplingRate);
         telemetry.update();
     }
 

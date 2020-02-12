@@ -24,6 +24,7 @@ public class MoveHelper extends OperationHelper {
     public double encoderPowerLevel = 1;
     public boolean joystickJacob = true;
     public boolean displayMoveOutputs = true;
+    public double rangedTarget = 20;
 
 
     public MoveHelper(Telemetry t, HardwareMap h)
@@ -42,6 +43,10 @@ public class MoveHelper extends OperationHelper {
         FRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BLMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BLMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BRMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void SetHighPower() {
@@ -167,7 +172,7 @@ public class MoveHelper extends OperationHelper {
     public void continueOneMotor(DcMotor motor){
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(encoderPowerLevel);
-        telemetry.addData("Continue target: " + motor.getDeviceName(),motor.getTargetPosition());
+        telemetry.addData("Continue rangedTarget: " + motor.getDeviceName(),motor.getTargetPosition());
     }
 
     public void runMotorsToPosition(int flPos, int frPos, int brPos, int blPos){
@@ -266,6 +271,32 @@ public class MoveHelper extends OperationHelper {
     }
     public int GetFLMotorPosition(){
         return FLMotor.getCurrentPosition();
+    }
+
+    double scale = 6; //98
+    double angleScale = -1;
+
+    public void driveBySensor(double currentAngleInRadians, double distance, double ly) {
+
+        double trueDistance = getTrueDistance(distance, currentAngleInRadians);
+        double heading = ((trueDistance - rangedTarget)/scale);
+        if (distance > 100) {
+            heading = 0;
+        }
+        if (ly == 0) {
+            heading = heading * 2;
+        }
+        omniDrive( heading, ly,currentAngleInRadians*angleScale);
+
+
+
+        //telemetry.addData("range", String.format("%.01f in", distance));
+        telemetry.addData("trueDistance", String.format("%.01f", trueDistance));
+        telemetry.addData("currentAngle", String.format("%.01f", currentAngleInRadians));
+    }
+
+    public double getTrueDistance(double distance, double gyroAngle) {
+        return distance * Math.cos(gyroAngle);
     }
 
 }
