@@ -23,15 +23,6 @@ public class DepotSamplingBlue extends OpMode {
     IMUHelper imuHelper;
     double lastTime;
     int state = 0;
-    int firstBlockDistance;
-    int secondBlockDistance;
-    private static int BRIDGE_TRAVEL_DISTANCE = 1950;
-    private static int SKYSTONE_DISTANCE = 1300;
-    private int returndist;
-    private static double SLOW_SPEED = .2;
-    private static double NORMAL_SPEED = .7;
-    private static double FAST_SPEED = 1;
-    private static double NINETY_IN_RADIANS = Math.PI/2;
 
     @Override
     public void init() {
@@ -42,7 +33,6 @@ public class DepotSamplingBlue extends OpMode {
         sensorColor = hardwareMap.get(ColorSensor.class, "colorsensor");
         blockColor = hardwareMap.get(ColorSensor.class,"blockdetector");
         blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
-        sensorRange = hardwareMap.get(DistanceSensor.class, "range");
         blockArmServoHelper.init();
         imuHelper = new IMUHelper(telemetry, hardwareMap);
         imuHelper.moveHelper = moveHelper;
@@ -65,6 +55,7 @@ public class DepotSamplingBlue extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("state", state);
+        telemetry.update();
         switch (state) {
             case 0:
                 lastTime = getRuntime();
@@ -74,12 +65,13 @@ public class DepotSamplingBlue extends OpMode {
 
             case 20:        //backwards move to line of blocks
                 moveHelper.runMotorsToPosition(900,900,900,900);
-                advanceToStateAfterTime(30, 1.25);
+                advanceToStateAfterTime(30, 1.5);
                 break;
             case 30:
                 moveHelper.resetEncoders();
                 state = 40;
                 break;
+
             case 40:        //left turn to line up for color sensing
                 moveHelper.runMotorsToPosition(750,-750,-750,750);
                 advanceToStateAfterTime(50,1);
@@ -91,11 +83,11 @@ public class DepotSamplingBlue extends OpMode {
 
             case 60: // Adjust angle so that we can move straight to the wall
                 imuHelper.turnTo(-90);
-                advanceToStateAfterTime(100, .75);
+                advanceToStateAfterTime(100, 1);
                 break;
 
-            case 100:        //strafe to line of blocks to get close enough for color sensor
-                moveHelper.encoderPowerLevel = SLOW_SPEED;
+            case 100:        //move back to the wall
+                moveHelper.encoderPowerLevel = .2;
                 moveHelper.runMotorsToPosition(600,-600,600,-600);
                 if (isCloseToBlock(blockColor)){
                     lastTime = getRuntime();
@@ -122,12 +114,10 @@ public class DepotSamplingBlue extends OpMode {
             case 210:        //light logic and move to sense
                 moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
                 if(isSkyStone(blockColor)){
-                    firstBlockDistance = moveHelper.getEncoderValue(); // a negative value
                     lastTime = getRuntime();
-                    returndist = firstBlockDistance - BRIDGE_TRAVEL_DISTANCE - SKYSTONE_DISTANCE;
                     state = 220;
                 }
-                advanceToStateAfterTime(998,5);
+                advanceToStateAfterTime(998,4);
                 break;
             case 220:
                 moveHelper.resetEncoders();
@@ -136,125 +126,49 @@ public class DepotSamplingBlue extends OpMode {
 
             case 230:        //lower block Arm
                 blockArmServoHelper.Close();
-                advanceToStateAfterTime(240,.5);
-                moveHelper.runWithoutEncoders(); // Turn off encoders so the next move can be a manual turn
+                advanceToStateAfterTime(240,1);
                 break;
+
             case 240:        //Strafe to separate from the line
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH), 0);
-                advanceToStateAfterTime(250,2);
+                moveHelper.encoderPowerLevel = .7;
+                moveHelper.runMotorsToPosition(-600,600,-600,600);
+                advanceToStateAfterTime(250,3);
                 break;
             case 250:
-                moveHelper.resetEncoders();
-                moveHelper.runWithoutEncoders();
-                moveHelper.omniDrive(0,0,0);
-                state = 260;
+                moveHelper.runWithoutEncoders(); // Turn off encoders so the next move can be a manual turn
+                moveHelper.encoderPowerLevel = 1;
+                state = 255;
                 break;
-            case 260:        //run to pass the bridge for the first time
-                int dist = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance; // subtracting a negative - ie add
-                // At first, go fast.  Then go more slowly at the other side
-                if (moveHelper.GetBLMotorPosition() < dist/2){
-                    moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.8);
-                } else {
-                    moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.4);
-                }
-                if (moveHelper.GetBLMotorPosition() > dist){
-                    lastTime = getRuntime();
-                    state = 280;
-                }
-                advanceToStateAfterTime(280,2.5);
+            case 255: //Adjust angle so robot runs past the bridge
+                imuHelper.turnTo(-92);
+                advanceToStateAfterTime(257, 1.5);
                 break;
-            case 280: //Block Arm up
-                moveHelper.omniDrive(0,0,0);
-                moveHelper.resetEncoders();
-                blockArmServoHelper.Open();
-                moveHelper.runWithoutEncoders();
-                advanceToStateAfterTime(300,1);
-                break;
-            case 300: // move back to other side
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.4);
-                if (moveHelper.GetBLMotorPosition() < returndist){
-                    lastTime = getRuntime();
-                    state = 305;
-                }
-                advanceToStateAfterTime(305,2.5);
-                break;
-            case 305:
-                moveHelper.omniDrive(0,0,0);
-                moveHelper.resetEncoders();
-                moveHelper.runWithoutEncoders();
-                advanceToStateAfterTime(310,.25);
-                break;
-            case 310: // creep to blocks to find range
-                moveHelper.encoderPowerLevel = SLOW_SPEED;
-                moveHelper.runMotorsToPosition(900,-900,900,-900);
-                if (isCloseToBlock(blockColor)){
-                    lastTime = getRuntime();
-                    state = 312;
-                }
-                advanceToStateAfterTime(997,3); //failsafe
-                break;
-            case 312:
+
+            case 257:
                 moveHelper.resetEncoders();
                 moveHelper.runUsingEncoders();
-                state = 315;
+                state = 260;
                 break;
-            case 315:        //light logic and move to sense
-                moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
-                if(isSkyStone(blockColor)){
-                    secondBlockDistance = moveHelper.getEncoderValue();
-                    returndist += secondBlockDistance;
-                    lastTime = getRuntime();
-                    state = 320;
-                }
-                advanceToStateAfterTime(998,5);
+
+            case 260:        //run to pass the bridge
+                moveHelper.encoderPowerLevel = .4;
+                moveHelper.runMotorsToPosition(2500, 2500, 2500, 2500);
+                advanceToStateAfterTime(270,3);
                 break;
-            case 320:        //lower block Arm
+            case 270:
                 moveHelper.resetEncoders();
-                blockArmServoHelper.Close();
-                advanceToStateAfterTime(325,1);
+                state = 280;
                 break;
-            case 325:
-                moveHelper.resetEncoders();
-                moveHelper.runWithoutEncoders();
-                state = 330;
-                break;
-            case 330:        //Strafe to separate from the line
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH), 0);
-                advanceToStateAfterTime(335,1.5);
-                break;
-            case 335:
-                moveHelper.omniDrive(0,0,0);
-                advanceToStateAfterTime(337,.25);
-                break;
-            case 337:
-                moveHelper.resetEncoders();
-                moveHelper.runWithoutEncoders();
-                state = 340;
-                break;
-            case 340:        //run to pass the bridge
-                int moveDistance = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance - secondBlockDistance + SKYSTONE_DISTANCE;
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.6);
-                if (moveHelper.GetBLMotorPosition() > -returndist){
-                    lastTime = getRuntime();
-                    state = 345;
-                }
-                //telemetry.addData("moveDistance", moveDistance);
-                telemetry.addData("-returndist", -returndist);
-                //telemetry.addData("firstBlockDistance", firstBlockDistance);
-                //telemetry.addData("secondBlockDistance", secondBlockDistance);
-                telemetry.addData("position", moveHelper.GetBLMotorPosition());
-                advanceToStateAfterTime(345,3);
-                break;
-            case 345: //Block Arm up
-                moveHelper.omniDrive(0,0,0);
-                moveHelper.resetEncoders();
-                moveHelper.runWithoutEncoders();
+
+            case 280: //Block Arm up
                 blockArmServoHelper.Open();
-                advanceToStateAfterTime(350,.5);
-                moveHelper.rangedTarget = 26;
+                moveHelper.runUsingEncoders();
+                moveHelper.omniDrive(0,0,0);
+                advanceToStateAfterTime(300,.5);
                 break;
-            case 350: //Move to park on blue line.
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.3);
+
+            case 300:
+                moveHelper.omniDrive(0,-.25,0);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0) {
                     double blueToGreen = (double) sensorColor.blue() / sensorColor.green();
                     double blueToRed = (double) sensorColor.blue() / sensorColor.red();
@@ -262,29 +176,26 @@ public class DepotSamplingBlue extends OpMode {
                     telemetry.addData("Green Ratio  ", blueToGreen);
 
                     if (blueToGreen > 1.2 && blueToRed > 1.5) {
-                        state = 360;
+                        state = 310;
                     }
                 }
-                advanceToStateAfterTime(360,3);
+                advanceToStateAfterTime(310,3);
                 break;
-            case 360:
+            case 310:
                 moveHelper.omniDrive(0,0,0);
-                state = 370;
+                state = 320;
                 break;
 
-            case 370:
+            case 320:
                 telemetry.addData("End Program", "");
                 break;
             case 997:
                 telemetry.addData("End: didn't sense stone line", "");
-                moveHelper.omniDrive(0,0,0);
                 break;
             case 998:
                 telemetry.addData("End: never found skystone", "");
-                moveHelper.omniDrive(0,0,0);
                 break;
         }
-        telemetry.update();
     }
 
     private boolean isSkyStone(ColorSensor blockColor){
