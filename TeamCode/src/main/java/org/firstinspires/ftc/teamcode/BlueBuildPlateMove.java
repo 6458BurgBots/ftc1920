@@ -223,22 +223,23 @@ public class BlueBuildPlateMove extends OpMode{
             case 130:
                 moveHelper.omniDrive(0,0,0);
                 break; */
-            case 120://Strafe left/Right to get in line with end position.
+            case 120:
+                moveHelper.runMotorsToPosition(600, 600,600,600);
+                advanceToStateAfterTime(125, 2);
+                break;
+
+            case 125:
+                moveHelper.resetEncoders();
+                state = 130;
+                break;
+            case 130://Strafe left/Right to get in line with end position.
                 if (isInside){
                     moveHelper.runMotorsToPosition(900,-900,900,-900);
                 }
                 else {
                     moveHelper.runMotorsToPosition(-1000, 1000, -1000, 1000);
                 }
-                advanceToStateAfterTime(125, 1);
-                break;
-            case 125:
-                moveHelper.resetEncoders();
-                state = 130;
-                break;
-            case 130:
-                moveHelper.runMotorsToPosition(600, 600,600,600);
-                advanceToStateAfterTime(135, 2);
+                advanceToStateAfterTime(135, 1);
                 break;
             case 135:
                 moveHelper.resetEncoders();

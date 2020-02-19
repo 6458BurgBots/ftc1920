@@ -101,6 +101,7 @@ public class TeleOpNew extends OpMode{
         if (gamepad2.x) {
             capArmServoHelper.Close();
         }
+        moveHelper.showEncoderValues();
         telemetry.update();
     }
     private boolean isSkyStone(int red, int green, int blue){

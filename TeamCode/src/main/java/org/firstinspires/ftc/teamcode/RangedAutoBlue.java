@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
 @Autonomous(name="RangedAutoBlue", group="Autonomous")
-@Disabled
 public class RangedAutoBlue extends OpMode {
 
     MoveHelper moveHelper;
@@ -28,7 +27,7 @@ public class RangedAutoBlue extends OpMode {
     int firstBlockDistance;
     int secondBlockDistance;
     private static int BRIDGE_TRAVEL_DISTANCE = 1950;
-    private static int SKYSTONE_DISTANCE = 1300;
+    private static int SKYSTONE_DISTANCE = 1200;
     private int returndist;
     private static double SLOW_SPEED = .2;
     private static double NORMAL_SPEED = .7;
@@ -124,18 +123,21 @@ public class RangedAutoBlue extends OpMode {
             case 210:        //light logic and move to sense
                 moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
                 if(isSkyStone(blockColor)){
-                    firstBlockDistance = moveHelper.getEncoderValue(); // a negative value
                     lastTime = getRuntime();
-                    returndist = firstBlockDistance - BRIDGE_TRAVEL_DISTANCE - SKYSTONE_DISTANCE;
                     state = 220;
+                    moveHelper.runWithoutEncoders();
                 }
                 advanceToStateAfterTime(998,5);
                 break;
-            case 220:
-                moveHelper.resetEncoders();
-                state = 230;
+            case 220: // give robot time to stop before catching the encoder value
+                advanceToStateAfterTime(225,.25);
+                moveHelper.omniDrive(0,0,0);
                 break;
-
+            case 225:
+                firstBlockDistance = moveHelper.getEncoderValue(); // a negative value
+                moveHelper.resetEncoders();
+                returndist = firstBlockDistance - BRIDGE_TRAVEL_DISTANCE - SKYSTONE_DISTANCE;
+                state = 230;
             case 230:        //lower block Arm
                 blockArmServoHelper.Close();
                 advanceToStateAfterTime(240,.5);
@@ -203,19 +205,20 @@ public class RangedAutoBlue extends OpMode {
             case 315:        //light logic and move to sense
                 moveHelper.runMotorsToPosition(-1600,-1600,-1600,-1600);
                 if(isSkyStone(blockColor)){
-                    secondBlockDistance = moveHelper.getEncoderValue();
-                    returndist += secondBlockDistance;
                     lastTime = getRuntime();
+                    moveHelper.runWithoutEncoders();
                     state = 320;
                 }
-                advanceToStateAfterTime(998,5);
+                advanceToStateAfterTime(998,4);
                 break;
             case 320:        //lower block Arm
-                moveHelper.resetEncoders();
                 blockArmServoHelper.Close();
-                advanceToStateAfterTime(325,1);
+                moveHelper.omniDrive(0,0,0);
+                advanceToStateAfterTime(325,.25);
                 break;
             case 325:
+                secondBlockDistance = moveHelper.getEncoderValue();
+                returndist += (secondBlockDistance - 400);
                 moveHelper.resetEncoders();
                 moveHelper.runWithoutEncoders();
                 state = 330;
@@ -234,17 +237,11 @@ public class RangedAutoBlue extends OpMode {
                 state = 340;
                 break;
             case 340:        //run to pass the bridge
-                int moveDistance = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance - secondBlockDistance + SKYSTONE_DISTANCE;
                 moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.6);
                 if (moveHelper.GetBLMotorPosition() > -returndist){
                     lastTime = getRuntime();
                     state = 345;
                 }
-                //telemetry.addData("moveDistance", moveDistance);
-                telemetry.addData("-returndist", -returndist);
-                //telemetry.addData("firstBlockDistance", firstBlockDistance);
-                //telemetry.addData("secondBlockDistance", secondBlockDistance);
-                telemetry.addData("position", moveHelper.GetBLMotorPosition());
                 advanceToStateAfterTime(345,3);
                 break;
             case 345: //Block Arm up
@@ -286,6 +283,9 @@ public class RangedAutoBlue extends OpMode {
                 moveHelper.omniDrive(0,0,0);
                 break;
         }
+        telemetry.addData("returndist",returndist);
+        telemetry.addData("FirstBlock",firstBlockDistance);
+        telemetry.addData("SecondBlock", secondBlockDistance);
         telemetry.update();
     }
 
@@ -305,7 +305,7 @@ public class RangedAutoBlue extends OpMode {
 
     private boolean isCloseToBlock(ColorSensor blockColor){
         double totalBlockSensorValues = blockColor.red() + blockColor.blue() + blockColor.green();
-        if (totalBlockSensorValues < 1500){
+        if (totalBlockSensorValues < 1300){
             return false;
         }
         return true;

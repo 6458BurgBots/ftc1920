@@ -50,7 +50,7 @@ public class MoveHelper extends OperationHelper {
     }
 
     public void SetHighPower() {
-        powerMultiple = .75;
+        powerMultiple = 1;
     }
 
     public void SetLowPower() {

@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
 
 @Autonomous(name="RangedAutoRed", group="Autonomous")
-@Disabled
 public class RangedAutoRed extends OpMode {
 
     MoveHelper moveHelper;
