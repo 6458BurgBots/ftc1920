@@ -279,7 +279,11 @@ public class MoveHelper extends OperationHelper {
     public void driveBySensor(double currentAngleInRadians, double distance, double ly) {
 
         double trueDistance = getTrueDistance(distance, currentAngleInRadians);
-        double heading = ((trueDistance - rangedTarget)/scale);
+        double gap = (trueDistance - rangedTarget);
+        if (gap < -8) { // if we are suddenly too close to the wall, assume this is the alliance robot
+            gap = 0;
+        }
+        double heading = (gap/scale);
         if (distance > 100) {
             heading = 0;
         }

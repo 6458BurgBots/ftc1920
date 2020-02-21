@@ -27,7 +27,7 @@ public class RangedAutoBlue extends OpMode {
     int firstBlockDistance;
     int secondBlockDistance;
     private static int BRIDGE_TRAVEL_DISTANCE = 1950;
-    private static int SKYSTONE_DISTANCE = 1200;
+    private static int SKYSTONE_DISTANCE = 900;     //Here!!! Was 1200 #2
     private int returndist;
     private static double SLOW_SPEED = .2;
     private static double NORMAL_SPEED = .7;
@@ -89,12 +89,13 @@ public class RangedAutoBlue extends OpMode {
                 moveHelper.resetEncoders();
                 state = 60;
                 break;
-
             case 60: // Adjust angle so that we can move straight to the wall
                 imuHelper.turnTo(-90);
-                advanceToStateAfterTime(100, .75);
+                advanceToStateAfterTime(70, .75);
                 break;
-
+            case 70:
+                moveHelper.resetEncoders();
+                state = 100;
             case 100:        //strafe to line of blocks to get close enough for color sensor
                 moveHelper.encoderPowerLevel = SLOW_SPEED;
                 moveHelper.runMotorsToPosition(600,-600,600,-600);
@@ -180,13 +181,13 @@ public class RangedAutoBlue extends OpMode {
                     lastTime = getRuntime();
                     state = 305;
                 }
-                advanceToStateAfterTime(305,2.5);
+                advanceToStateAfterTime(305,3.5);       //Here!!!   2.5 #1
                 break;
             case 305:
                 moveHelper.omniDrive(0,0,0);
                 moveHelper.resetEncoders();
                 moveHelper.runWithoutEncoders();
-                advanceToStateAfterTime(310,.25);
+                advanceToStateAfterTime(310,.5);       //Here!!!      .25  #1
                 break;
             case 310: // creep to blocks to find range
                 moveHelper.encoderPowerLevel = SLOW_SPEED;
@@ -214,11 +215,11 @@ public class RangedAutoBlue extends OpMode {
             case 320:        //lower block Arm
                 blockArmServoHelper.Close();
                 moveHelper.omniDrive(0,0,0);
-                advanceToStateAfterTime(325,.25);
+                advanceToStateAfterTime(325,.5);
                 break;
             case 325:
                 secondBlockDistance = moveHelper.getEncoderValue();
-                returndist += (secondBlockDistance - 400);
+                returndist += secondBlockDistance;
                 moveHelper.resetEncoders();
                 moveHelper.runWithoutEncoders();
                 state = 330;
@@ -253,7 +254,7 @@ public class RangedAutoBlue extends OpMode {
                 moveHelper.rangedTarget = 26;
                 break;
             case 350: //Move to park on blue line.
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.3);
+                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.2);
                 if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0) {
                     double blueToGreen = (double) sensorColor.blue() / sensorColor.green();
                     double blueToRed = (double) sensorColor.blue() / sensorColor.red();
@@ -264,7 +265,7 @@ public class RangedAutoBlue extends OpMode {
                         state = 360;
                     }
                 }
-                advanceToStateAfterTime(360,3);
+                advanceToStateAfterTime(360,5);
                 break;
             case 360:
                 moveHelper.omniDrive(0,0,0);
