@@ -173,7 +173,11 @@ public class RangedAutoBlue extends OpMode {
                 moveHelper.resetEncoders();
                 blockArmServoHelper.Open();
                 moveHelper.runWithoutEncoders();
-                advanceToStateAfterTime(300,1);
+                if (firstBlockDistance < -450){ //If third position
+                    advanceToStateAfterTime(350,1); //Park
+                }else {
+                    advanceToStateAfterTime(300,1); //Get another skystone
+                }
                 break;
             case 300: // move back to other side
                 moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.4);
