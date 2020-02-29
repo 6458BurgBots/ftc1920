@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -24,10 +23,10 @@ public class RangedAutoRed extends OpMode {
     int state = 0;
     int firstBlockDistance;
     int secondBlockDistance;
-    private static int BRIDGE_TRAVEL_DISTANCE = -1950;
-    private static int SKYSTONE_DISTANCE = -1300;
+    private static int BRIDGE_TRAVEL_DISTANCE = 1950;
+    private static int SKYSTONE_DISTANCE = 900;     //Here!!! Was 1200 #2
     private int returndist;
-    private static double SLOW_SPEED = .2;
+    private static double SLOW_SPEED = .18;
     private static double NORMAL_SPEED = .7;
     private static double FAST_SPEED = 1;
     private static double NINETY_IN_RADIANS = Math.PI/2;
@@ -87,12 +86,13 @@ public class RangedAutoRed extends OpMode {
                 moveHelper.resetEncoders();
                 state = 60;
                 break;
-
             case 60: // Adjust angle so that we can move straight to the wall
                 imuHelper.turnTo(-90);
-                advanceToStateAfterTime(100, .75);
+                advanceToStateAfterTime(70, .75);
                 break;
-
+            case 70:
+                moveHelper.resetEncoders();
+                state = 100;
             case 100:        //strafe to line of blocks to get close enough for color sensor
                 moveHelper.encoderPowerLevel = SLOW_SPEED;
                 moveHelper.runMotorsToPosition(600,-600,600,-600);
@@ -121,18 +121,21 @@ public class RangedAutoRed extends OpMode {
             case 210:        //light logic and move to sense
                 moveHelper.runMotorsToPosition(1600,1600,1600,1600);
                 if(isSkyStone(blockColor)){
-                    firstBlockDistance = moveHelper.getEncoderValue(); // a negative value
                     lastTime = getRuntime();
-                    returndist = firstBlockDistance - BRIDGE_TRAVEL_DISTANCE - SKYSTONE_DISTANCE;
                     state = 220;
+                    moveHelper.runWithoutEncoders();
                 }
                 advanceToStateAfterTime(998,5);
                 break;
-            case 220:
-                moveHelper.resetEncoders();
-                state = 230;
+            case 220: // give robot time to stop before catching the encoder value
+                advanceToStateAfterTime(225,.25);
+                moveHelper.omniDrive(0,0,0);
                 break;
-
+            case 225:
+                firstBlockDistance = moveHelper.getEncoderValue(); // a positive value
+                moveHelper.resetEncoders();
+                returndist = firstBlockDistance + BRIDGE_TRAVEL_DISTANCE + SKYSTONE_DISTANCE;
+                state = 230;
             case 230:        //lower block Arm
                 blockArmServoHelper.Close();
                 advanceToStateAfterTime(240,.5);
@@ -149,7 +152,7 @@ public class RangedAutoRed extends OpMode {
                 state = 260;
                 break;
             case 260:        //run to pass the bridge for the first time
-                int dist = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance; // subtracting a positive on red side - ie bigger negative
+                int dist = -(BRIDGE_TRAVEL_DISTANCE + firstBlockDistance);
                 // At first, go fast.  Then go more slowly at the other side
                 if (moveHelper.GetBLMotorPosition() > dist/2){
                     moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.8);
@@ -167,7 +170,11 @@ public class RangedAutoRed extends OpMode {
                 moveHelper.resetEncoders();
                 blockArmServoHelper.Open();
                 moveHelper.runWithoutEncoders();
-                advanceToStateAfterTime(300,1);
+                if (firstBlockDistance > 550){ //If third position
+                    advanceToStateAfterTime(350,1); //Park
+                }else {
+                    advanceToStateAfterTime(300,1); //Get another skystone
+                }
                 break;
             case 300: // move back to other side
                 moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.4);
@@ -175,13 +182,13 @@ public class RangedAutoRed extends OpMode {
                     lastTime = getRuntime();
                     state = 305;
                 }
-                advanceToStateAfterTime(305,2.5);
+                advanceToStateAfterTime(305,3.5);       //Here!!!   2.5 #1
                 break;
             case 305:
                 moveHelper.omniDrive(0,0,0);
                 moveHelper.resetEncoders();
                 moveHelper.runWithoutEncoders();
-                advanceToStateAfterTime(310,.25);
+                advanceToStateAfterTime(310,.5);       //Here!!!      .25  #1
                 break;
             case 310: // creep to blocks to find range
                 moveHelper.encoderPowerLevel = SLOW_SPEED;
@@ -200,19 +207,20 @@ public class RangedAutoRed extends OpMode {
             case 315:        //light logic and move to sense
                 moveHelper.runMotorsToPosition(1600,1600,1600,1600);
                 if(isSkyStone(blockColor)){
-                    secondBlockDistance = moveHelper.getEncoderValue();
-                    returndist += secondBlockDistance;
                     lastTime = getRuntime();
+                    moveHelper.runWithoutEncoders();
                     state = 320;
                 }
-                advanceToStateAfterTime(998,5);
+                advanceToStateAfterTime(998,4);
                 break;
             case 320:        //lower block Arm
-                moveHelper.resetEncoders();
                 blockArmServoHelper.Close();
-                advanceToStateAfterTime(325,1);
+                moveHelper.omniDrive(0,0,0);
+                advanceToStateAfterTime(325,.5);
                 break;
             case 325:
+                secondBlockDistance = moveHelper.getEncoderValue();
+                //returndist += secondBlockDistance;  // WHS TURNED OFF TEMPORARILY
                 moveHelper.resetEncoders();
                 moveHelper.runWithoutEncoders();
                 state = 330;
@@ -231,17 +239,11 @@ public class RangedAutoRed extends OpMode {
                 state = 340;
                 break;
             case 340:        //run to pass the bridge
-                int moveDistance = BRIDGE_TRAVEL_DISTANCE - firstBlockDistance - secondBlockDistance + SKYSTONE_DISTANCE;
                 moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),-0.6);
-                if (moveHelper.GetBLMotorPosition() < -returndist){
+                if (moveHelper.GetBLMotorPosition() > returndist){
                     lastTime = getRuntime();
                     state = 345;
                 }
-                //telemetry.addData("moveDistance", moveDistance);
-                telemetry.addData("-returndist", -returndist);
-                //telemetry.addData("firstBlockDistance", firstBlockDistance);
-                //telemetry.addData("secondBlockDistance", secondBlockDistance);
-                telemetry.addData("position", moveHelper.GetBLMotorPosition());
                 advanceToStateAfterTime(345,3);
                 break;
             case 345: //Block Arm up
@@ -253,18 +255,20 @@ public class RangedAutoRed extends OpMode {
                 moveHelper.rangedTarget = 26;
                 break;
             case 350: //Move to park on blue line.
-                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.3);
-                if (sensorColor.blue() > 30 && sensorColor.green() > 0 && sensorColor.red() > 0) {
-                    double blueToGreen = (double) sensorColor.blue() / sensorColor.green();
-                    double blueToRed = (double) sensorColor.blue() / sensorColor.red();
-                    telemetry.addData("Red Ratio ", blueToRed);
-                    telemetry.addData("Green Ratio  ", blueToGreen);
+                moveHelper.driveBySensor(imuHelper.getAngleInRadians()+NINETY_IN_RADIANS,sensorRange.getDistance(DistanceUnit.INCH),0.2);
+                if (sensorColor.red() > 30 && sensorColor.green() > 0 && sensorColor.blue() > 0)
+                {
+                    double redToGreen = (double)sensorColor.red() / sensorColor.green();
+                    double redToBlue = (double)sensorColor.red() / sensorColor.blue();
+                    telemetry.addData("Blue Ratio ", redToBlue);
+                    telemetry.addData("Green Ratio  ", redToGreen);
 
-                    if (blueToGreen > 1.2 && blueToRed > 1.5) {
+                    if (redToGreen > 1.5 && redToBlue > 2)
+                    {
                         state = 360;
                     }
                 }
-                advanceToStateAfterTime(360,3);
+                advanceToStateAfterTime(360,5);
                 break;
             case 360:
                 moveHelper.omniDrive(0,0,0);
@@ -283,6 +287,9 @@ public class RangedAutoRed extends OpMode {
                 moveHelper.omniDrive(0,0,0);
                 break;
         }
+        telemetry.addData("returndist",returndist);
+        telemetry.addData("FirstBlock",firstBlockDistance);
+        telemetry.addData("SecondBlock", secondBlockDistance);
         telemetry.update();
     }
 
@@ -302,7 +309,7 @@ public class RangedAutoRed extends OpMode {
 
     private boolean isCloseToBlock(ColorSensor blockColor){
         double totalBlockSensorValues = blockColor.red() + blockColor.blue() + blockColor.green();
-        if (totalBlockSensorValues < 1500){
+        if (totalBlockSensorValues < 1300){
             return false;
         }
         return true;

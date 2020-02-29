@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Helper.BuildPlateServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.CapArmServoHelper;
 import org.firstinspires.ftc.teamcode.Helper.IMUHelper;
 import org.firstinspires.ftc.teamcode.Helper.MoveHelper;
-import org.firstinspires.ftc.teamcode.Helper.ClawHelper;
+import org.firstinspires.ftc.teamcode.Helper.StateArmHelper;
 import org.firstinspires.ftc.teamcode.Helper.PickupArmHelper;
 
 @TeleOp(name="TeleOpNew", group="TeleOp")
@@ -21,7 +21,7 @@ public class TeleOpNew extends OpMode{
     CapArmServoHelper capArmServoHelper;
     private DcMotor LeftFeedMotor;
     private DcMotor RightFeedMotor;
-    ClawHelper pickupArmHelper;
+    StateArmHelper pickupArmHelper;
     BuildPlateServoHelper buildPlateServoHelper;
     ColorSensor sensorColor;
     ColorSensor blockColor;
@@ -35,12 +35,11 @@ public class TeleOpNew extends OpMode{
         moveHelper.resetEncoders();
         moveHelper.runUsingEncoders();
         moveHelper.displayMoveOutputs = false;
-
         blockArmServoHelper = new BlockArmServoHelper(telemetry, hardwareMap);
         blockArmServoHelper.init();
         capArmServoHelper = new CapArmServoHelper(telemetry, hardwareMap);
         capArmServoHelper.init();
-        pickupArmHelper = new ClawHelper(telemetry, hardwareMap);
+        pickupArmHelper = new StateArmHelper(telemetry, hardwareMap);
         pickupArmHelper.init();
         buildPlateServoHelper = new BuildPlateServoHelper(telemetry, hardwareMap);
         buildPlateServoHelper.init();
@@ -102,7 +101,7 @@ public class TeleOpNew extends OpMode{
             capArmServoHelper.Close();
         }
         moveHelper.showEncoderValues();
-        telemetry.update();
+        //telemetry.update();
     }
     private boolean isSkyStone(int red, int green, int blue){
         double redToBlue = red / blue;
